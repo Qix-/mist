@@ -18,7 +18,7 @@ MistTranslator = require './mist-translator'
 
 ninjaProc = process.env.NINJA || 'ninja'
 
-runNinja = (ninja)->
+runNinja = (ninja, base)->
   console.log 'platform:', os.platform()
   switch os.platform()
     when 'darwin' or 'linux'
@@ -36,8 +36,9 @@ runNinja = (ninja)->
       console.log 'streaming complete'
       fs.closeSync tmpFile.fd
       console.log 'running Ninja'
-      spawn ninjaProc, [ '-vf', tmpFile.name ], stdio: [ 'pipe',
-        process.stdout, process.stderr ]
+      spawn ninjaProc,
+        [ '-vf', tmpFile.name, '-C', base ],
+          stdio: [ 'pipe',process.stdout, process.stderr ]
 
 findMist = ()->
   curPath = process.cwd()
@@ -54,6 +55,7 @@ findMist = ()->
 
 try
   mistfile = findMist()
+  mistdir = path.dirname mistfile
   console.log 'evaporating Mistfile at', mistfile
   try
     result = MistParser.parse fs.readFileSync(mistfile).toString()
@@ -65,7 +67,7 @@ try
   console.log '\n' ##
   console.log result ## XXX DEBUG
   console.log '\n' ##
-  runNinja result
+  runNinja result, mistdir
 catch e
   console.error 'mist:', e.toString()
   throw e # XXX DEBUG
