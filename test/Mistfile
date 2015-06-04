@@ -1,3 +1,5 @@
 # bin/obj directories
-BIN = bin
-OBJ = $(BIN)/obj
+OUT = hello-mist
+
+# build header
+: bar.h.in |> node dict.js "%f" "%o" qux="Qix" |> bar.h

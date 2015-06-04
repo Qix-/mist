@@ -15,6 +15,8 @@ module.exports.translate = (parsed)->
   for statement in parsed
     switch statement.type
       when 'var' then result.push "#{statement.name}=#{statement.val}"
+      when 'rule'
+        console.error 'WARNING: rules not implemented yet'
       else
         throw "Unknown Mistfile construct type: #{statement.type}"
 

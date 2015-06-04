@@ -17,12 +17,60 @@ mistfile
   ;
 
 statement
-  = statement_vardecl
+  = statement_rule
+  / statement_vardecl
+  ;
+
+statement_rule
+  = ':'
+    main_inputs:(_? i:glob_list {i})?
+    dep_inputs:(_? '|' _? i:glob_list {i})?
+    order_inputs:(_? '||' _? i:glob_list {i})?
+    command:(_? cmd:rule_command {cmd})
+    main_outputs:(_? i:delim_path_list {i})?
+    aux_outputs:(_? '|' _? i:delim_path_list {i})?
+    ___* _
+    {
+      type: 'rule'
+      main_inputs: main_inputs || []
+      dep_inputs: dep_inputs || []
+      order_inputs: order_inputs || []
+      command: command
+      main_outputs: main_outputs || []
+      aux_outputs: aux_outputs || []
+    }
+  ;
+
+rule_command
+  = '|>' _? cmd:(!(_? '|>') substitute_itr)+ _? '|>'
+    {cmd.join ''}
+  ;
+
+delim_path_list
+  = first:delim_path others:(_ d:delim_path {d})*
+    {[first].concat (others || [])}
+  ;
+
+delim_path
+  = $[a-z0-9\/\.\-\_\~\%]i+
+  ;
+
+glob_list
+  = first:glob others:(_ g:glob {g})*
+    {[first].concat (others || [])}
+  ;
+
+glob
+  = $[a-z0-9\/\*\.\-\_\~]i+
   ;
 
 statement_vardecl
   = name:variable_name _? '=' _? val:substitute_string
-    {type:'var',name:name, val:val}
+    {
+      type: 'var'
+      name: name
+      val: val
+    }
   ;
 
 substitute_string
@@ -53,8 +101,13 @@ _ ""
   ;
 
 __ ""
-  = [ \t\r\n]
+  = ___
+  / [\r\n]
   / comment
+  ;
+
+___ ""
+  = [ \t]
   ;
 
 comment ""
