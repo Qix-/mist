@@ -12,19 +12,41 @@
  */
 
 mistfile
-  = comment _
-    {''}
+  = _? statements:(s:statement _? {s})+
+    {statements}
   ;
 
-comment
-  = "--" [^\r\n]+
+statement
+  = statement_vardecl
   ;
 
-__
-  = [ \t\r\n]
+statement_vardecl
+  = name:variable_name _? '=' _? val:$([^\r\n]+)
+    {type:'var',name:name, val:val}
   ;
 
-_
+substitute_string
+  = 
+
+variable_ref "variable reference"
+  = '$(' _? name:variable_name _? ')'
+    {'$' + name}
+  ;
+
+variable_name
+  = $([a-z0-9_]i+)
+  ;
+
+_ ""
   = __+
-    {' '}
   ;
+
+__ ""
+  = [ \t\r\n]
+  / comment
+  ;
+
+comment ""
+  = '#' [^\r\n]*
+  ;
+

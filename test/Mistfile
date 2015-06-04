@@ -1,1 +1,3 @@
--- Bin directory
+# bin/obj directories
+BIN = bin
+OBJ = $(BIN)/obj

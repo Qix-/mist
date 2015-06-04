@@ -14,6 +14,7 @@ os = require 'os'
 path = require 'path'
 spawn = (require 'child_process').spawn
 MistParser = require './mist-parser'
+MistTranslator = require './mist-translator'
 
 ninjaProc = process.env.NINJA || 'ninja'
 
@@ -54,8 +55,16 @@ findMist = ()->
 try
   mistfile = findMist()
   console.log 'evaporating Mistfile at', mistfile
-  result = MistParser.parse fs.readFileSync(mistfile).toString()
+  try
+    result = MistParser.parse fs.readFileSync(mistfile).toString()
+    result = MistTranslator.translate result
+  catch e
+    console.error (require 'util').inspect e
+    throw 'parsing failed'
   console.log 'performing Mist->Ninja pass-off'
-  runNinja result
+  #runNinja result
+  console.log '\n\n'
+  console.log result
 catch e
   console.error 'mist:', e.toString()
+  throw e # XXX DEBUG
