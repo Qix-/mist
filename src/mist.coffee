@@ -62,9 +62,10 @@ try
     console.error (require 'util').inspect e
     throw 'parsing failed'
   console.log 'performing Mist->Ninja pass-off'
-  #runNinja result
-  console.log '\n\n'
-  console.log result
+  console.log '\n' ##
+  console.log result ## XXX DEBUG
+  console.log '\n' ##
+  runNinja result
 catch e
   console.error 'mist:', e.toString()
   throw e # XXX DEBUG

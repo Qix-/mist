@@ -21,12 +21,23 @@ statement
   ;
 
 statement_vardecl
-  = name:variable_name _? '=' _? val:$([^\r\n]+)
+  = name:variable_name _? '=' _? val:substitute_string
     {type:'var',name:name, val:val}
   ;
 
 substitute_string
-  = 
+  = str:substitute_itr+
+    {str.join ''}
+  ;
+
+substitute_itr
+  = substitute_escape
+  / [^\r\n]
+  ;
+
+substitute_escape
+  = ('$(' _? name:variable_name _? ')') {'$' + name}
+  ;
 
 variable_ref "variable reference"
   = '$(' _? name:variable_name _? ')'
