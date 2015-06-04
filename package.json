@@ -12,7 +12,18 @@
     "url": "https://github.com/AERO-ff/mist/issues"
   },
   "keywords": [
-    "build", "system", "mist", "ninja", "task", "runner", "streams"
+    "build",
+    "system",
+    "mist",
+    "ninja",
+    "task",
+    "runner",
+    "streams"
   ],
-  "preferGlobal": true
+  "preferGlobal": true,
+  "devDependencies": {
+    "coffee-script": "^1.9.3",
+    "pegjs": "^0.8.0",
+    "pegjs-coffee-plugin": "^0.2.2"
+  }
 }
