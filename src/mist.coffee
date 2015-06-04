@@ -11,6 +11,7 @@
 tmp = require 'tmp'
 fs = require 'fs'
 os = require 'os'
+path = require 'path'
 spawn = (require 'child_process').spawn
 MistParser = require './mist-parser'
 
@@ -37,4 +38,24 @@ runNinja = (ninja)->
       spawn ninjaProc, [ '-vf', tmpFile.name ], stdio: [ 'pipe',
         process.stdout, process.stderr ]
 
-runNinja ''
+findMist = ()->
+  curPath = process.cwd()
+  lastPath = ''
+  loop
+    lastPath = curPath
+    mistPath = path.join curPath, 'Mistfile'
+    try
+      stat = fs.statSync mistPath
+      return mistPath if stat.isFile()
+    break if (curPath = path.dirname curPath) is lastPath
+
+  throw 'Mistfile not found (reached filesystem boundary)'
+
+try
+  mistfile = findMist()
+  console.log 'evaporating Mistfile at', mistfile
+  result = MistParser.parse fs.readFileSync(mistfile).toString()
+  console.log 'performing Mist->Ninja pass-off'
+  runNinja result
+catch e
+  console.error 'mist:', e.toString()
