@@ -25,5 +25,8 @@
     "coffee-script": "^1.9.3",
     "pegjs": "^0.8.0",
     "pegjs-coffee-plugin": "^0.2.2"
+  },
+  "dependencies": {
+    "tmp": "0.0.26"
   }
 }
