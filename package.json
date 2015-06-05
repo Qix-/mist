@@ -27,6 +27,7 @@
     "pegjs-coffee-plugin": "^0.2.2"
   },
   "dependencies": {
+    "glob": "^5.0.10",
     "tmp": "0.0.26",
     "xxhash": "^0.2.2"
   }
