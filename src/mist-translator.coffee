@@ -9,9 +9,7 @@
  # Copyright (c) 2015 On Demand Solutions, inc.
 
 glob = require 'glob'
-xxhash = require 'xxhash'
-
-xxHashSeed = (parseInt 'AEROMIST', 30) >> 2
+MistNinjaBuilder = require './mist-ninja-builder'
 
 Array::unique = ->
   a = []
@@ -72,26 +70,18 @@ module.exports.translate = (parsed, mistdir)->
   console.log parsed ## XXX DEBUG
   console.log '\n'   ##
 
-  result = []
-  result.pushScoped = (val)-> @push "  #{val}"
-
-  rules = []
+  builder = new MistNinjaBuilder()
+  builder.setRootDir mistdir # TODO must be executed only for the root file
 
   for statement in parsed
     switch statement.type
-      when 'var' then result.push "#{statement.name}=#{statement.val}"
+      when 'var'
+        builder.setVar statement.name, statement.val
       when 'rule'
-        # get hash of command
-        # we use xxhash because it's damn fast.
-        cmdHash = xxhash.hash (new Buffer statement.command), xxHashSeed
-        cmdHash = 'cmd' + cmdHash.toString 36
-
-        # do we have that rule/command already?
-        if cmdHash not in rules
-          # create the rule
-          rules.push cmdHash
-          result.push "rule #{cmdHash}"
-          result.pushScoped "command=#{statement.command}"
+        try
+          builder.addRuleHash statement.command
+        catch e
+          console.error "dup"
 
         # perform glob
         inFiles =
@@ -109,4 +99,4 @@ module.exports.translate = (parsed, mistdir)->
       else
         throw "Unknown Mistfile construct type: #{statement.type}"
 
-  (result.join '\n') + '\n'
+  builder.render()
