@@ -58,12 +58,16 @@ delim_path
   ;
 
 glob_list
-  = first:glob others:(_ g:glob {g})*
+  = first:glob others:(_ g:glob {g})* _
     {[first].concat (others || [])}
   ;
 
 glob
-  = $[a-z0-9\/\*\.\-\_\~]i+
+  = $(glob_basic_char $(glob_basic_char/'|')*)+
+  ;
+
+glob_basic_char
+  = [a-z0-9\/\*\.\-\_\~\{\}\(\)]i
   ;
 
 statement_vardecl
