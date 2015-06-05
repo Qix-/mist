@@ -59,14 +59,18 @@ try
   console.log 'evaporating Mistfile at', mistfile
   try
     result = MistParser.parse fs.readFileSync(mistfile).toString()
-    result = MistTranslator.translate result
   catch e
     console.error (require 'util').inspect e
     throw 'parsing failed'
+  try
+    result = MistTranslator.translate result, mistdir
+  catch e
+    throw e
+
   console.log 'performing Mist->Ninja pass-off'
-  console.log '\n' ##
+  console.log '\n'   ##
   console.log result ## XXX DEBUG
-  console.log '\n' ##
+  console.log '\n'   ##
   runNinja result, mistdir
 catch e
   console.error 'mist:', e.toString()

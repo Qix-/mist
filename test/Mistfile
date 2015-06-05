@@ -1,5 +1,5 @@
 # bin/obj directories
-OUT = hello-mist
+BIN = bin
 
 # build header
 : bar.h.in |> node dict.js "%f" "%o" qux="Qix" |> bar.h

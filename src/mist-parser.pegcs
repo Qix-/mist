@@ -23,6 +23,7 @@ statement
 
 statement_rule
   = ':'
+    foreach:(_? "foreach")?
     main_inputs:(_? i:glob_list {i})?
     dep_inputs:(_? '|' _? i:glob_list {i})?
     order_inputs:(_? '||' _? i:glob_list {i})?
@@ -32,6 +33,7 @@ statement_rule
     ___* _
     {
       type: 'rule'
+      foreach: (if foreach? then yes else no)
       main_inputs: main_inputs || []
       dep_inputs: dep_inputs || []
       order_inputs: order_inputs || []
@@ -42,7 +44,7 @@ statement_rule
   ;
 
 rule_command
-  = '|>' _? cmd:(!(_? '|>') substitute_itr)+ _? '|>'
+  = '|>' _? cmd:((!(_? '|>')) c:substitute_itr {c})+ _? '|>'
     {cmd.join ''}
   ;
 
