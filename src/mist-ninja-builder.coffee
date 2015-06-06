@@ -19,7 +19,7 @@ module.exports = class MistNinjaBuilder
     @rootDir
     @registry.vars = @registry.vars || []
     @registry.rules = @registry.rules || {}
-    @registry.targets = @registry.rules || []
+    @registry.targets = @registry.targets || []
 
     @commandDict = @compileCommandDict()
     @commandDictRefs = {}
@@ -105,6 +105,8 @@ module.exports = class MistNinjaBuilder
     targets.forEach (target)=>
       build_vars = @compileDict target.main_inputs
 
+      target.rule = commandHash
+
       target.main_inputs =
         MistGlobber.doAllGlobs target.main_inputs, @mistDir
 
@@ -137,7 +139,14 @@ module.exports = class MistNinjaBuilder
 
         target.build_vars[d] = target.build_vars[d].join ' '
 
+      target.main_inputs = target.main_inputs.join ' '
+      target.dep_inputs = target.dep_inputs.join ' '
+      target.order_inputs = target.order_inputs.join ' '
+      target.main_outputs = target.main_outputs.join ' '
+      target.aux_outputs = target.aux_outputs.join ' '
+
       console.log target
+      @registry.targets.push target
 
   render: ->
     lines = []
@@ -156,12 +165,14 @@ module.exports = class MistNinjaBuilder
         lines.pushScoped "#{k}=#{v}"
 
     for target in @registry.targets
-      lines.push "build #{target.outputs.join ' '}: " +
-           "#{if target.phony then "phony"} #{target.rule} " +
-           "#{target.inputs.join ' '}" +
-           "#{if target.deps.length then " | "}#{target.deps.join ' '}" +
-           "#{if target.odeps.length then " || "}#{target.deps.join ' '}"
-      for k,v of target.vars
+      outputs = target.main_outputs + target.aux_outputs
+      lines.push "build #{outputs}: " +
+           "#{target.rule} " +
+           "#{target.main_inputs}" +
+           "#{if target.dep_inputs.length then " | "}#{target.dep_inputs}" +
+           "#{if target.order_inputs.length then " || "}" +
+           "#{target.order_inputs}"
+      for k, v of target.build_vars
         lines.pushScoped "#{k}=#{v}"
 
     lines.push '' # Ninja requires a newline at the end :)
