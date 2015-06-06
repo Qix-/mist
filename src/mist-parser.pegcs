@@ -15,19 +15,13 @@
   MistNinjaBuilder = require './mist-ninja-builder'
 
   @builder = new MistNinjaBuilder
+  @builder.setRootDir options.mistdir # TODO: set to root dir, not cd
+  @builder.setDir options.mistdir
 }
 
 mistfile
-  = (header '\n')*
-    _? statements:(s:statement _? {s})+
+  = _? statements:(s:statement _? {s})+
     {@builder.render()}
-  ;
-
-header
-  = '#!ROOT ' dir:$[^\n]+
-    {@builder.setRootDir dir}
-  / '#!DIR ' dir:$[^\n]+
-    {@builder.setDir dir}
   ;
 
 statement

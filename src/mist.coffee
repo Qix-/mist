@@ -59,12 +59,7 @@ try
   console.log 'evaporating Mistfile at', mistfile
   try
     contents = fs.readFileSync(mistfile).toString()
-    contents = [
-      "#!ROOT #{mistdir}" #TODO change to root dir
-      "#!DIR #{mistdir}"
-      contents
-    ].join '\n'
-    result = MistParser.parse contents
+    result = MistParser.parse contents, mistdir:mistdir
   catch e
     throw e # XXX DEBUG
 
