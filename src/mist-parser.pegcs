@@ -11,14 +11,30 @@
  *       Released under the MIT License
  */
 
+{
+  MistNinjaBuilder = require './mist-ninja-builder'
+
+  @builder = new MistNinjaBuilder
+}
+
 mistfile
-  = _? statements:(s:statement _? {s})+
-    {statements}
+  = (header '\n')*
+    _? statements:(s:statement _? {s})+
+    {@builder.render()}
+  ;
+
+header
+  = '#!ROOT ' dir:$[^\n]+
+    {@builder.setRootDir dir}
+  / '#!DIR ' dir:$[^\n]+
+    {@builder.setDir dir}
   ;
 
 statement
-  = statement_rule
-  / statement_vardecl
+  = s:statement_rule
+    {@builder.addTarget s}
+  / s:statement_vardecl
+    {@builder.setVar s.name, s.val}
   ;
 
 statement_rule
