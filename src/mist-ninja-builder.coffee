@@ -112,7 +112,6 @@ module.exports = class MistNinjaBuilder
       target.rule = commandHash
 
       build_vars = @compileDict target.main_inputs
-      console.log "\x1b[31m", build_vars, "\x1b[0m"
 
       target.dep_inputs =
         @delimitAll target.dep_inputs, build_vars
@@ -178,7 +177,6 @@ module.exports = class MistNinjaBuilder
         lines.pushScoped "#{k}=#{v}"
 
     lines.push '' # Ninja requires a newline at the end :)
-    console.log lines.join '\n'
     lines.join '\n'
 
 MistNinjaBuilder.hashCommand = (command)->
