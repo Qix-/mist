@@ -1,6 +1,6 @@
 BIN = bin
 
 # just a demonstration of globs!
-: foreach @(bar|rab).h.in |> node dict.js "%f" "%o" qux="Qix" |> %B.h
+: foreach @(bar|rab).h.in |> node dict.js "%f" "%o" |> %B.h
 
-: foreach *.c || bar.h |> gcc -g2 -o "%o" "%f" |> hello-mist
+: foreach *.c | bar.h |> gcc -g2 -o "%o" "%f" |> hello-mist
