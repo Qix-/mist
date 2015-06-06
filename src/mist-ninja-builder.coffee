@@ -41,6 +41,9 @@ module.exports = class MistNinjaBuilder
     # it is a pre-req and this method does not check for it.
     results = []
     for k, p of dict
+      if not p.length
+        results = [str]
+        break
       for v, i in p
         results[i] = (results[i] || str).replace "%#{k}", v
     return results
@@ -89,9 +92,10 @@ module.exports = class MistNinjaBuilder
     targets = []
 
 
-    statement.main_inputs =
-      MistGlobber.doAllGlobs statement.main_inputs, @mistDir
-    # TODO error on no inputs
+    if statement.main_inputs.length
+      statement.main_inputs =
+        MistGlobber.doAllGlobs statement.main_inputs, @mistDir
+      # TODO error on no inputs (but only if globs were supplied)
 
     if statement.foreach
       for inp in statement.main_inputs
@@ -108,6 +112,7 @@ module.exports = class MistNinjaBuilder
       target.rule = commandHash
 
       build_vars = @compileDict target.main_inputs
+      console.log "\x1b[31m", build_vars, "\x1b[0m"
 
       target.dep_inputs =
         @delimitAll target.dep_inputs, build_vars
@@ -173,6 +178,7 @@ module.exports = class MistNinjaBuilder
         lines.pushScoped "#{k}=#{v}"
 
     lines.push '' # Ninja requires a newline at the end :)
+    console.log lines.join '\n'
     lines.join '\n'
 
 MistNinjaBuilder.hashCommand = (command)->
