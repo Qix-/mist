@@ -1,0 +1,3 @@
+script: ./bootstrap.sh
+after_script:
+  - bin/mist.run.js
