@@ -30,6 +30,7 @@ globStatCache = {}
 globSymCache = {}
 
 module.exports.performGlob = (pattern, mistdir)->
+  console.log "\x1b[31m",mistdir,"\x1b[0m"
   globOpts =
     cwd: mistdir
     root: mistdir # TODO change this to the root Mistfile dir
@@ -56,10 +57,7 @@ module.exports.performGlob = (pattern, mistdir)->
     nonegate: yes # NOTE: negating globs is messy. stahp that.
     nocomment: yes
 
-#  if glob.hasMagic pattern, globOpts
   glob.sync pattern, globOpts
-#  else
-#    [pattern]
 
 module.exports.doAllGlobs = (globs, mistdir)->
   (module.exports.performGlob pattern, mistdir for pattern in globs)

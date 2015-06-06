@@ -104,12 +104,13 @@ module.exports = class MistNinjaBuilder
       targets = [statement]
 
     targets.forEach (target)=>
-      build_vars = @compileDict target.main_inputs
-
       target.rule = commandHash
 
       target.main_inputs =
         MistGlobber.doAllGlobs target.main_inputs, @mistDir
+      # TODO error on no inputs
+
+      build_vars = @compileDict target.main_inputs
 
       target.dep_inputs =
         @delimitAll target.dep_inputs, build_vars
