@@ -64,9 +64,6 @@ try
     throw e # XXX DEBUG
 
   console.log 'performing Mist->Ninja pass-off'
-  console.log '\n'   ##
-  console.log result ## XXX DEBUG
-  console.log '\n'   ##
   runNinja result, mistdir
 catch e
   throw e # XXX DEBUG

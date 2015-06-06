@@ -30,7 +30,6 @@ globStatCache = {}
 globSymCache = {}
 
 module.exports.performGlob = (pattern, mistdir)->
-  console.log "\x1b[31m",mistdir,"\x1b[0m"
   globOpts =
     cwd: mistdir
     root: mistdir # TODO change this to the root Mistfile dir

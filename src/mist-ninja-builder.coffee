@@ -24,11 +24,7 @@ module.exports = class MistNinjaBuilder
     @commandDict = @compileCommandDict()
     @commandDictRefs = {}
     for k, v of @commandDict
-      console.log k
-      console.log v
       @commandDictRefs[k] = ["${#{v[0]}}"]
-
-    console.log @commandDictRefs
 
   setRootDir: (@rootDir)->
   setDir: (@mistDir)->
@@ -147,7 +143,6 @@ module.exports = class MistNinjaBuilder
       target.main_outputs = target.main_outputs.join ' '
       target.aux_outputs = target.aux_outputs.join ' '
 
-      console.log target
       @registry.targets.push target
 
   render: ->
@@ -168,7 +163,6 @@ module.exports = class MistNinjaBuilder
 
     for target in @registry.targets
       outputs = target.main_outputs + target.aux_outputs
-      console.log target.dep_inputs || 'nope'
       lines.push "build #{outputs}: " +
            "#{target.rule} " +
            "#{target.main_inputs}" +
