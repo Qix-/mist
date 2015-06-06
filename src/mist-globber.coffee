@@ -44,7 +44,8 @@ module.exports.performGlob = (pattern, mistdir)->
     statCache: globStatCache
     symlinks: globSymCache
     nounique: no
-    nonull: no
+    nonull: yes   # NOTE: in the event no files are found, we should assume
+                  #       it's a regular file name
     debug: no
     nobrace: no
     noglobstar: no
