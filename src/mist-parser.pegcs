@@ -113,6 +113,7 @@ variable_ref
       val = @builder.getVar name
       if val then val
       else
+        # TODO put in as exception in builder; catch here and gracefully handle
         console.warn 'mist: unknown variable \'' + name + '\'',
           '\n    at', options.mistfile + ':' + line() + ':' + column()
         return ''

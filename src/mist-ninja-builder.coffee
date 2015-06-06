@@ -8,6 +8,7 @@
  #             MIST BUILD SYSTEM
  # Copyright (c) 2015 On Demand Solutions, inc.
 
+path = require 'path'
 xxhash = require 'xxhash'
 MistGlobber = require './mist-globber'
 
@@ -20,6 +21,11 @@ module.exports = class MistNinjaBuilder
     @registry.rules = @registry.rules || {}
     @registry.targets = @registry.rules || []
 
+    @commandDict = @compileCommandDict()
+    @commandDictRefs = {}
+    for k, v of @commandDict
+      @commandDictRefs[k] = "${#{k}}"
+
   setRootDir: (@rootDir)->
   setDir: (@mistDir)->
 
@@ -29,6 +35,35 @@ module.exports = class MistNinjaBuilder
   getVar: (name)->
     for pair in @registry.vars
       return pair.val if pair.name is name
+
+  delimitDict: (str, dict)->
+    # note that lib object values should all be arrays of equal length!
+    # it is a pre-req and this method does not check for it.
+    results = []
+    for k, p of dict
+      for v, i in p
+        results[i] = (results[i] || str).replace "%#{k}", v
+    return results
+
+  compileDict: (inputs)->
+    dict = {}
+    dict.f = inputs
+    dict.b = inputs.map path.basename
+    return dict
+
+  compileCommandDict: ->
+    dict = {}
+    for c in "ofb"
+      dict[c] = ["D_#{c}"]
+    return dict
+
+  delimitCommand: (cmd)->
+    (@delimitDict cmd, @commandDict)[0]
+
+  delimitAll: (arr, dict = {})->
+    arr
+      .map (v)=> @delimitDict v, dict
+      .flatten()
 
   addRule: (name, command, vars = {})->
     if @registry.rules[name]?
@@ -42,50 +77,61 @@ module.exports = class MistNinjaBuilder
     @addRule hash, command, vars
 
   addTarget: (statement)->
-    # perform glob
-    inFiles =
-      main_inputs: MistGlobber.doAllGlobs statement.main_inputs, @mistDir
-      dep_inputs: MistGlobber.doAllGlobs statement.dep_inputs, @mistDir
-      order_inputs: MistGlobber.doAllGlobs statement.order_inputs, @mistDir
-      main_outputs: statement.main_outputs.unique()
-      aux_outputs: statement.aux_outputs.unique()
-    console.log inFiles
-
-    # some logic:
-    #   FOREACH
-    #     ran for each input
-    #     deps honor delims per file
-    #     odeps honor delims per file
-    #     command honors delims per file
-    #     outputs honor delims per file; must have at least one
-    #     aux outputs honor delims per file; must have at least one
-    #   SINGLE
-    #     ran once for all inputs
-    #     deps with delims generate for each file and flatten array
-    #     deps with no delims appear once, verbatim
-    #     odeps with delims generate for each file and flatten array
-    #     odeps with no delims appear once, verbatim
-    #     command honors delims, but still inserts all
-    #     outputs honor delims for each file and flatten array
-    #     aux-outputs honor delims for each file and flatten array
-
-    # setup regexes
-    noForeachReg = /\%[fo]/g
-    foreachReg = /\%[fo]/g
-
-    # transform the command
-    #command = if statement.foreach
-
-
-    # hash the transformed commmand
-    commandHash = MistNinjaBuilder.hashCommand statement.command
+    command = @delimitCommand statement.command
+    commandHash = MistNinjaBuilder.hashCommand command
 
     # add the rule
     try
-      @addRule commandHash, statement.command
+      @addRule commandHash, command
       # we silently ignore duplicates
 
-    #if statement.foreach
+    targets = []
+
+    if statement.foreach
+      for inp in statement.main_inputs
+        targets.push
+          main_inputs: [inp]
+          dep_inputs: statement.dep_inputs.slice 0
+          order_inputs: statement.order_inputs.slice 0
+          main_outputs: statement.main_outputs.slice 0
+          aux_outputs: statement.aux_outputs.slice 0
+    else
+      targets = [statement]
+
+    targets.forEach (target)=>
+      build_vars = @compileDict target.main_inputs
+
+      target.main_inputs =
+        MistGlobber.doAllGlobs target.main_inputs, @mistDir
+
+      target.dep_inputs =
+        @delimitAll target.dep_inputs, build_vars
+      target.order_inputs =
+        @delimitAll target.order_inputs, build_vars
+
+      target.dep_inputs =
+        MistGlobber.doAllGlobs target.dep_inputs, @mistDir
+      target.order_inputs =
+        MistGlobber.doAllGlobs target.order_inputs, @mistDir
+
+
+      target.main_outputs =
+        @delimitAll target.main_outputs, build_vars
+      target.aux_outputs =
+        @delimitAll target.aux_outputs, build_vars
+
+      target.main_outputs =
+        target.main_outputs.unique()
+      target.aux_outputs =
+        target.aux_outputs.unique()
+
+      target.build_vars = {}
+      for k, d of @commandDict
+        switch k
+          when 'o' then target.build_vars[d] = target.main_outputs
+          else target.build_vars[d] = build_vars[k]
+
+      console.log target
 
   render: ->
     lines = []
