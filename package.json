@@ -2,7 +2,7 @@
   "name": "mist",
   "description": "Mist build system",
   "author": "Qix- (github.com/qix-)",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "repository": {
     "type": "git",
