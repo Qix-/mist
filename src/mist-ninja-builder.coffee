@@ -53,11 +53,12 @@ module.exports = class MistNinjaBuilder
     dict = {}
     dict.f = inputs
     dict.b = inputs.map path.basename
+    dict.B = dict.b.map (s)-> s.replace /^([^.]+).+$/, '$1'
     return dict
 
   compileCommandDict: ->
     dict = {}
-    for c in "ofb"
+    for c in "ofbB"
       dict[c] = ["D_#{c}"]
     return dict
 
@@ -166,12 +167,12 @@ module.exports = class MistNinjaBuilder
 
     for target in @registry.targets
       outputs = target.main_outputs + target.aux_outputs
+      console.log target.dep_inputs || 'nope'
       lines.push "build #{outputs}: " +
            "#{target.rule} " +
            "#{target.main_inputs}" +
-           "#{if target.dep_inputs.length then " | "}#{target.dep_inputs}" +
-           "#{if target.order_inputs.length then " || "}" +
-           "#{target.order_inputs}"
+           "#{if target.dep_inputs then " | #{target.dep_inputs}" else ''}" +
+           "#{if target.order_inputs then " || #{target.order_inputs}" else ''}"
       for k, v of target.build_vars
         lines.pushScoped "#{k}=#{v}"
 
