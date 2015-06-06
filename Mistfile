@@ -5,3 +5,4 @@ pegcs = node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin
 
 : foreach src/*.coffee |> cat "%f" | $(coffee) -cbmsp --no-header > "%o" |> $(BIN)/%B.js
 : foreach src/*.pegcs |> $(pegcs) -o speed "%f" "%o" |> $(BIN)/%B.js
+: || $(BIN)/mist.js |> node script/mkrun.js "$(BIN)/mist.js" "%o" && chmod +x "%o" |> $(BIN)/mist.run.js
