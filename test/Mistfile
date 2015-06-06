@@ -1,5 +1,6 @@
 # bin/obj directories
 BIN = bin
+SRC = .
 
 # build header
-: @(bar|rab).h.in |> node dict.js "%f" "%o" qux="Qix" |> bar.h
+: $(SRC)/@(bar|rab).h.in |> node dict.js "%f" "%o" qux="Qix" |> $(BIN)/bar.h

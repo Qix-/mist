@@ -26,6 +26,10 @@ module.exports = class MistNinjaBuilder
   setVar: (name, val)->
     @registry.vars.push name:name, val:val
 
+  getVar: (name)->
+    for pair in @registry.vars
+      return pair.val if pair.name is name
+
   addRule: (name, command, vars = {})->
     if @registry.rules[name]?
       throw "attempt to add duplicate rule '#{name}'"
@@ -36,11 +40,6 @@ module.exports = class MistNinjaBuilder
   addRuleHash: (command, vars = {})->
     hash = MistNinjaBuilder.hashCommand command
     @addRule hash, command, vars
-
-  expand: (str)->
-    str.replace /\$\{([^\}]+)\}/g, (m, name) =>
-      # TODO error?
-      @registry.vars[name] || ''
 
   addTarget: (statement)->
     # perform glob

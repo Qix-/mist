@@ -70,7 +70,13 @@ delim_path_list
   ;
 
 delim_path
-  = $[a-z0-9\/\.\-\_\~\%]i+
+  = c:delim_path_char+
+    {c.join ''}
+  ;
+
+delim_path_char
+  = variable_ref
+  / [a-z0-9\/\.\-\_\~\%]i
   ;
 
 glob_list
@@ -79,11 +85,13 @@ glob_list
   ;
 
 glob
-  = $(glob_basic_char $(glob_basic_char/'|')*)+
+  = cf:glob_char co:(glob_char/'|')*
+    {([cf].concat co).join ''}
   ;
 
-glob_basic_char
-  = [a-z0-9\/\*\.\-\_\~\{\}\(\)\@\?\[\]\!]i
+glob_char
+  = variable_ref
+  / [a-z0-9\/\*\.\-\_\~\{\}\(\)\@\?\[\]\!]i
   ;
 
 statement_vardecl
@@ -101,18 +109,20 @@ substitute_string
   ;
 
 substitute_itr
-  = substitute_escape
+  = variable_ref
   / [^\r\n]
   ;
 
-substitute_escape
-  = ('$(' _? name:variable_name _? ')') {'$' + name}
-  ;
-
-variable_ref "variable reference"
+variable_ref
   = '$(' _? name:variable_name _? ')'
-    {'${' + name + '}'}
-    /*'//synhi fix*/
+    {
+      val = @builder.getVar name
+      if val then val
+      else
+        console.warn 'mist: unknown variable \'' + name + '\'',
+          '\n    at', options.mistfile + ':' + line() + ':' + column()
+        return ''
+    }
   ;
 
 variable_name
