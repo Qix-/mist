@@ -1,3 +1,5 @@
 /src/
 /node_modules/
 /bootstrap.sh
+/ext/
+/bin/*.map
