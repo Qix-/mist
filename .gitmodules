@@ -1,3 +1,4 @@
 [submodule "ext/ninja"]
 	path = ext/ninja
 	url = https://github.com/martine/ninja.git
+	ignore = dirty
