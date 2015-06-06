@@ -14,7 +14,6 @@ os = require 'os'
 path = require 'path'
 spawn = (require 'child_process').spawn
 MistParser = require './mist-parser'
-MistTranslator = require './mist-translator'
 
 ninjaProc = process.env.NINJA || 'ninja'
 
