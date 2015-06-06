@@ -8,4 +8,8 @@ node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist-glob
 node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/mist-parser.pegcs bin/mist-parser.js || success=false
 echo -en "\x1b[0m"
 
-$success && echo "Built successfully"
+$success && echo "Built successfully" || exit 1
+echo
+
+(cd test/hello && node ../../bin/mist.js) && test/hello/hello-mist || exit 1
+(cd test/foreach && node ../../bin/mist.js) || exit 1
