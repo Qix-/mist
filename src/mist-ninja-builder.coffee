@@ -50,6 +50,7 @@ module.exports = class MistNinjaBuilder
       order_inputs: MistGlobber.doAllGlobs statement.order_inputs, @mistDir
       main_outputs: statement.main_outputs.unique()
       aux_outputs: statement.aux_outputs.unique()
+    console.log inFiles
 
     # some logic:
     #   FOREACH

@@ -56,10 +56,10 @@ module.exports.performGlob = (pattern, mistdir)->
     nonegate: yes # NOTE: negating globs is messy. stahp that.
     nocomment: yes
 
-  if glob.hasMagic pattern
-    glob.sync pattern, globOpts
-  else
-    [pattern]
+#  if glob.hasMagic pattern, globOpts
+  glob.sync pattern, globOpts
+#  else
+#    [pattern]
 
 module.exports.doAllGlobs = (globs, mistdir)->
   (module.exports.performGlob pattern, mistdir for pattern in globs)

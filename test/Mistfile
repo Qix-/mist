@@ -2,4 +2,4 @@
 BIN = bin
 
 # build header
-: (bar|rab).h.in |> node dict.js "%f" "%o" qux="Qix" |> bar.h
+: @(bar|rab).h.in |> node dict.js "%f" "%o" qux="Qix" |> bar.h
