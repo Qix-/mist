@@ -15,7 +15,7 @@ path = require 'path'
 spawn = (require 'child_process').spawn
 MistParser = require './mist-parser'
 
-ninjaProc = process.env.NINJA || 'ninja'
+ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
 runNinja = (ninja, base)->
   console.log 'platform:', os.platform()
