@@ -95,7 +95,8 @@ substitute_escape
 
 variable_ref "variable reference"
   = '$(' _? name:variable_name _? ')'
-    {'$' + name}
+    {'${' + name + '}'}
+    /*'//synhi fix*/
   ;
 
 variable_name

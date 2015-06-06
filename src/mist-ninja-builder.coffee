@@ -34,6 +34,11 @@ module.exports = class MistNinjaBuilder
     hash = MistNinjaBuilder.hashCommand command
     @addRule hash, command, vars
 
+  expand: (str) ->
+    str.replace /\$\{([^\}]+)\}/g, (m, name) =>
+      # TODO error?
+      @registry.vars[name] || ''
+
   render: ->
     lines = []
     lines.pushScoped = (v)-> @push "  #{v}"

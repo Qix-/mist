@@ -62,8 +62,46 @@ performGlob = (pattern, mistdir)->
   else
     [pattern]
 
-doAllGlobs = (globs, mistdir) ->
+doAllGlobs = (globs, mistdir)->
   (performGlob pattern, mistdir for pattern in globs).flatten().unique()
+
+addTarget = (builder, statement, inFiles, rule)->
+  # some logic:
+  #   FOREACH
+  #     ran for each input
+  #     deps honor delims per file
+  #     odeps honor delims per file
+  #     command honors delims per file
+  #     outputs honor delims per file; must have at least one
+  #     aux outputs honor delims per file; must have at least one
+  #   SINGLE
+  #     ran once for all inputs
+  #     deps with delims generate for each file and flatten array
+  #     deps with no delims appear once, verbatim
+  #     odeps with delims generate for each file and flatten array
+  #     odeps with no delims appear once, verbatim
+  #     command honors delims, but still inserts all
+  #     outputs honor delims for each file and flatten array
+  #     aux-outputs honor delims for each file and flatten array
+
+  # setup regexes
+  noForeachReg = /\%[fo]/g
+  foreachReg = /\%[fo]/g
+
+  # transform the command
+  command = if statement.foreach
+
+
+  # hash the transformed commmand
+  commandHash = MistNinjaBuilder.hashCommand command
+
+  # add the rule
+  try
+    builder.addRule commandHash, statement.command
+    # we silently ignore duplicates
+
+  if statement.foreach
+    
 
 module.exports.translate = (parsed, mistdir)->
   console.log '\n'   ##
@@ -78,11 +116,6 @@ module.exports.translate = (parsed, mistdir)->
       when 'var'
         builder.setVar statement.name, statement.val
       when 'rule'
-        try
-          builder.addRuleHash statement.command
-        catch e
-          console.error "dup"
-
         # perform glob
         inFiles =
           main_inputs: doAllGlobs statement.main_inputs, mistdir
@@ -91,11 +124,8 @@ module.exports.translate = (parsed, mistdir)->
           main_outputs: statement.main_outputs.unique()
           aux_outputs: statement.aux_outputs.unique()
 
-        # foreach?
-        if statement.foreach then inFiles.main_inputs.join ' '
-
         # write build rule(s)
-
+        addTarget builder, statement, inFiles, ruleHash
       else
         throw "Unknown Mistfile construct type: #{statement.type}"
 
