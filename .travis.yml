@@ -1,3 +1,6 @@
-before_script: npm install
+before_script:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq ninja
+  - npm install
 script: ./bootstrap.sh
 after_script: bin/mist.run.js
