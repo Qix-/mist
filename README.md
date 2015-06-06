@@ -1,4 +1,4 @@
-# Mist
+# Mist [![Travis-CI Build Status](https://travis-ci.org/AERO-ff/mist.svg?branch=master)](https://travis-ci.org/AERO-ff/mist)
 The build system for AERO.
 
 Mist is a [Ninja](https://martine.github.io/ninja/) build system wrapper written
