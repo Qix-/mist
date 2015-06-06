@@ -135,6 +135,8 @@ module.exports = class MistNinjaBuilder
           when 'o' then target.build_vars[d] = target.main_outputs
           else target.build_vars[d] = build_vars[k]
 
+        target.build_vars[d] = target.build_vars[d].join ' '
+
       console.log target
 
   render: ->
