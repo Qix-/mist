@@ -158,9 +158,6 @@ module.exports = class MistNinjaBuilder
       lines.push "builddir=#{@rootDir}"
       lines.push "ninja_required_version=1.5.3"
 
-    for pair in @registry.vars
-      lines.push "#{pair.name}=#{pair.val}"
-
     for rule, vars of @registry.rules
       lines.push "rule #{rule}"
       for k,v of vars
