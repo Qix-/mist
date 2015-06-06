@@ -83,7 +83,7 @@ glob
   ;
 
 glob_basic_char
-  = [a-z0-9\/\*\.\-\_\~\{\}\(\)\@]i
+  = [a-z0-9\/\*\.\-\_\~\{\}\(\)\@\?\[\]\!]i
   ;
 
 statement_vardecl
