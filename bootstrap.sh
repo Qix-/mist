@@ -1,6 +1,8 @@
 #!/bin/bash
 success=true
 
+npm install
+
 (cd ext/ninja && ./configure.py --bootstrap) || exit 1
 
 echo -en "\x1b[1;31m"
