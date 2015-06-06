@@ -88,6 +88,11 @@ module.exports = class MistNinjaBuilder
 
     targets = []
 
+
+    statement.main_inputs =
+      MistGlobber.doAllGlobs statement.main_inputs, @mistDir
+    # TODO error on no inputs
+
     if statement.foreach
       for inp in statement.main_inputs
         targets.push
@@ -101,10 +106,6 @@ module.exports = class MistNinjaBuilder
 
     targets.forEach (target)=>
       target.rule = commandHash
-
-      target.main_inputs =
-        MistGlobber.doAllGlobs target.main_inputs, @mistDir
-      # TODO error on no inputs
 
       build_vars = @compileDict target.main_inputs
 
