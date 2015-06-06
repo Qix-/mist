@@ -24,7 +24,11 @@ module.exports = class MistNinjaBuilder
     @commandDict = @compileCommandDict()
     @commandDictRefs = {}
     for k, v of @commandDict
-      @commandDictRefs[k] = "${#{k}}"
+      console.log k
+      console.log v
+      @commandDictRefs[k] = ["${#{v[0]}}"]
+
+    console.log @commandDictRefs
 
   setRootDir: (@rootDir)->
   setDir: (@mistDir)->
@@ -58,7 +62,7 @@ module.exports = class MistNinjaBuilder
     return dict
 
   delimitCommand: (cmd)->
-    (@delimitDict cmd, @commandDict)[0]
+    (@delimitDict cmd, @commandDictRefs)[0]
 
   delimitAll: (arr, dict = {})->
     arr
