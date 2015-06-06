@@ -2,3 +2,4 @@
 /node_modules/
 /bin/
 .ninja_*
+npm-debug.log
