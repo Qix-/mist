@@ -45,7 +45,7 @@ module.exports = class MistNinjaBuilder
         results = [str]
         break
       for v, i in p
-        results[i] = (results[i] || str).replace "%#{k}", v
+        results[i] = (results[i] || str).replace new RegExp("%#{k}", 'g'), v
     return results
 
   compileDict: (inputs)->
