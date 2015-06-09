@@ -20,7 +20,7 @@
 }
 
 mistfile
-  = _? statements:(s:statement _? {s})+
+  = _? statements:(s:statement _? {s})*
     {@builder.render()}
   ;
 
