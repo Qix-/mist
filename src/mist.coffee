@@ -8,7 +8,8 @@
  #             MIST BUILD SYSTEM
  # Copyright (c) 2015 On Demand Solutions, inc.
 
-(require 'source-map-support').install()
+try
+  (require 'source-map-support').install()
 tmp = require 'tmp'
 fs = require 'fs'
 os = require 'os'
