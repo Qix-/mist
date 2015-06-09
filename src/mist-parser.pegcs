@@ -75,12 +75,12 @@ delim_path_char
 
 input_list
   = first:input others:(_ i:input {i})* _
-    {[first].concat (others || [])}
+    {console.log [first].concat (others || [])}
   ;
 
 input
-  = glob
-  / group_ref
+  = group_ref
+  / glob
   ;
 
 group_ref
