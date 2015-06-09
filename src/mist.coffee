@@ -53,9 +53,11 @@ runNinja = (ninja, base)->
       console.log 'streaming complete'
       fs.closeSync tmpFile.fd
       console.log 'running Ninja'
-      spawn ninjaProc,
+      proc = spawn ninjaProc,
         ([ '-vf', tmpFile.name, '-C', base ].concat ninjaArgs),
           stdio: [ 'pipe',process.stdout, process.stderr ]
+
+  proc.on 'exit', process.exit
 
 findMist = ()->
   curPath = process.cwd()
