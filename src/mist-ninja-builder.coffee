@@ -95,7 +95,6 @@ module.exports = class MistNinjaBuilder
     if statement.main_inputs.length
       statement.main_inputs =
         MistGlobber.doAllGlobs statement.main_inputs, @mistDir
-      # TODO error on no inputs (but only if globs were supplied)
 
     if statement.foreach
       for inp in statement.main_inputs
