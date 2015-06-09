@@ -23,6 +23,7 @@ if [ -z "$1" ] || [ "$1" == "test" ]; then
   NINJA=`pwd`/ext/ninja/ninja node bin/mist.js
   (cd test/hello && node ../../bin/mist.js) && test/hello/hello-mist || exit 1
   (cd test/foreach && node ../../bin/mist.js) || exit 1
+  (cd test/group && node ../../bin/mist.js) || exit 1
 fi
 
 $success && echo "Built successfully" || exit 1
