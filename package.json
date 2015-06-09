@@ -27,7 +27,8 @@
   "devDependencies": {
     "coffee-script": "^1.9.3",
     "pegjs": "^0.8.0",
-    "pegjs-coffee-plugin": "^0.2.2"
+    "pegjs-coffee-plugin": "^0.2.2",
+    "source-map-support": "^0.3.1"
   },
   "dependencies": {
     "commander": "^2.8.1",
