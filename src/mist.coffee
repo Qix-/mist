@@ -36,7 +36,8 @@ runNinja = (ninja, base)->
   switch os.platform()
     when 'darwin' or 'linux'
       console.log 'running Ninja'
-      proc = spawn ninjaProc, ([ '-vf', '/dev/stdin' ].concat ninjaArgs),
+      proc = spawn ninjaProc, ([ '-vf', '/dev/stdin', '-C', base ]
+        .concat ninjaArgs),
         stdio: [ null,
           process.stdout, process.stderr ]
       console.log 'uploading translated Mist configuration to Ninja...'
