@@ -45,6 +45,7 @@ module.exports = class MistNinjaBuilder
         results = [str]
         break
       for v, i in p
+        console.log '\x1b[31m', (results[i] || str), '\x1b[0m'
         results[i] = (results[i] || str).replace new RegExp("%#{k}", 'g'), v
     return results
 
@@ -80,9 +81,10 @@ module.exports = class MistNinjaBuilder
     hash = MistNinjaBuilder.hashCommand command
     @addRule hash, command, vars
 
-  mapInputs: ()-> (input)=>
+  mapInputs: (build_vars)-> (input)=>
     switch input.type
-      when 'glob' then MistGlobber.performGlob input.glob, @mistDir
+      when 'glob'
+        MistGlobber.doAllGlobs (@delimitDict input.glob, build_vars), @mistDir
       else
         throw "unknown input type '#{input.type}'"
 
@@ -97,8 +99,10 @@ module.exports = class MistNinjaBuilder
 
     targets = []
 
+    console.log '\x1b[32m', (require('util').inspect statement.main_inputs), '\x1b[0m'
     if statement.main_inputs.length
-      statement.main_inputs = statement.main_inputs.map(@mapInputs).flatten()
+      statement.main_inputs =
+        statement.main_inputs.map(@mapInputs {}).flatten()
 
     if statement.foreach
       for inp in statement.main_inputs
@@ -117,15 +121,9 @@ module.exports = class MistNinjaBuilder
       build_vars = @compileDict target.main_inputs
 
       target.dep_inputs =
-        @delimitAll target.dep_inputs, build_vars
+        target.dep_inputs.map(@mapInputs build_vars).flatten()
       target.order_inputs =
-        @delimitAll target.order_inputs, build_vars
-
-      target.dep_inputs =
-        target.dep_inputs.map(@mapInputs).flatten()
-      target.order_inputs =
-        target.order_inputs.map(@mapInputs).flatten()
-
+        target.order_inputs.map(@mapInputs build_vars).flatten()
 
       target.main_outputs =
         @delimitAll target.main_outputs, build_vars

@@ -40,6 +40,7 @@ statement_rule
     command:(_? cmd:rule_command {cmd})
     main_outputs:(_? i:delim_path_list {i})?
     aux_outputs:(_? '|' _? i:delim_path_list {i})?
+    groups:(_? '->' gs:(_? g:group_name {g})* {gs})?
     ___* _
     {
       type: 'rule'
@@ -64,6 +65,11 @@ delim_path_list
   ;
 
 delim_path
+  = path:((!'->') p:delim_path_ {p})
+    {path}
+  ;
+
+delim_path_
   = c:delim_path_char+
     {c.join ''}
   ;
@@ -75,7 +81,7 @@ delim_path_char
 
 input_list
   = first:input others:(_ i:input {i})* _
-    {console.log [first].concat (others || [])}
+    {[first].concat (others || [])}
   ;
 
 input
