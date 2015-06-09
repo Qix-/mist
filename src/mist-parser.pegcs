@@ -82,6 +82,15 @@ input
   = glob
   ;
 
+group_ref
+  = '!' name:group_name
+    {name}
+  ;
+
+group_name
+  = $([a-z_]i [a-z0-9_]i*)
+  ;
+
 glob
   = cf:glob_char co:(glob_char/'|')*
     {([cf].concat co).join ''}
