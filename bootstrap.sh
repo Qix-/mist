@@ -11,10 +11,10 @@ fi
 if [ -z "$1" ] || [ "$1" == "mist" ]; then
   shift
   echo -en "\x1b[1;31m"
-  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist.coffee || success=false
-  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist-ninja-builder.coffee || success=false
-  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist-globber.coffee || success=false
-  node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/mist-parser.pegcs bin/mist-parser.js || success=false
+  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist.coffee || exit 1
+  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist-ninja-builder.coffee || exit 1
+  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist-globber.coffee || exit 1
+  node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/mist-parser.pegcs bin/mist-parser.js || exit 1
   echo -en "\x1b[0m"
 fi
 
@@ -26,5 +26,4 @@ if [ -z "$1" ] || [ "$1" == "test" ]; then
   (cd test/group && node ../../bin/mist.js) || exit 1
 fi
 
-$success && echo "Built successfully" || exit 1
-echo
+echo "Built successfully"
