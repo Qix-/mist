@@ -80,6 +80,7 @@ input_list
 
 input
   = glob
+  / group_ref
   ;
 
 group_ref
