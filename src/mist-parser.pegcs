@@ -85,7 +85,7 @@ input
 
 group_ref
   = '!' name:group_name
-    {name}
+    {type: 'group', group: name}
   ;
 
 group_name
@@ -94,7 +94,7 @@ group_name
 
 glob
   = cf:glob_char co:(glob_char/'|')*
-    {([cf].concat co).join ''}
+    {type: 'glob', glob: ([cf].concat co).join ''}
   ;
 
 glob_char
