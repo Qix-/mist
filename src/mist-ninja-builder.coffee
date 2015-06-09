@@ -80,6 +80,12 @@ module.exports = class MistNinjaBuilder
     hash = MistNinjaBuilder.hashCommand command
     @addRule hash, command, vars
 
+  mapInputs: ()-> (input)=>
+    switch input.type
+      when 'glob' then MistGlobber.performGlob input.glob, @mistDir
+      else
+        throw "unknown input type '#{input.type}'"
+
   addTarget: (statement)->
     command = @delimitCommand statement.command
     commandHash = MistNinjaBuilder.hashCommand command
@@ -91,10 +97,8 @@ module.exports = class MistNinjaBuilder
 
     targets = []
 
-
     if statement.main_inputs.length
-      statement.main_inputs =
-        MistGlobber.doAllGlobs statement.main_inputs, @mistDir
+      statement.main_inputs = statement.main_inputs.map(@mapInputs).flatten()
 
     if statement.foreach
       for inp in statement.main_inputs
@@ -118,9 +122,9 @@ module.exports = class MistNinjaBuilder
         @delimitAll target.order_inputs, build_vars
 
       target.dep_inputs =
-        MistGlobber.doAllGlobs target.dep_inputs, @mistDir
+        target.dep_inputs.map(@mapInputs).flatten()
       target.order_inputs =
-        MistGlobber.doAllGlobs target.order_inputs, @mistDir
+        target.order_inputs.map(@mapInputs).flatten()
 
 
       target.main_outputs =
