@@ -13,17 +13,32 @@ fs = require 'fs'
 os = require 'os'
 path = require 'path'
 spawn = (require 'child_process').spawn
+config = require 'commander'
+packageJson = require '../package'
 MistParser = require './mist-parser'
 
 ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
+
+ninjaArgs = []
+mistArgs = []
+for a, i in process.argv.slice 2
+  if a is '--'
+    ninjaArgs = process.argv.slice i+3
+    break
+  else mistArgs.push a
+
+config
+  .version packageJson.version
+  .parse mistArgs
 
 runNinja = (ninja, base)->
   console.log 'platform:', os.platform()
   switch os.platform()
     when 'darwin' or 'linux'
       console.log 'running Ninja'
-      proc = spawn ninjaProc, [ '-vf', '/dev/stdin' ], stdio: [ null,
-        process.stdout, process.stderr ]
+      proc = spawn ninjaProc, ([ '-vf', '/dev/stdin' ].concat ninjaArgs),
+        stdio: [ null,
+          process.stdout, process.stderr ]
       console.log 'uploading translated Mist configuration to Ninja...'
       proc.stdin.write ninja
       console.log 'upload complete'
@@ -36,7 +51,7 @@ runNinja = (ninja, base)->
       fs.closeSync tmpFile.fd
       console.log 'running Ninja'
       spawn ninjaProc,
-        [ '-vf', tmpFile.name, '-C', base ],
+        ([ '-vf', tmpFile.name, '-C', base ].concat ninjaArgs),
           stdio: [ 'pipe',process.stdout, process.stderr ]
 
 findMist = ()->
