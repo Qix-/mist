@@ -20,6 +20,7 @@ module.exports = class MistNinjaBuilder
     @registry.vars = @registry.vars || []
     @registry.rules = @registry.rules || {}
     @registry.targets = @registry.targets || []
+    @registry.groups = @registry.groups || {}
 
     @commandDict = @compileCommandDict()
     @commandDictRefs = {}
@@ -85,6 +86,7 @@ module.exports = class MistNinjaBuilder
     switch input.type
       when 'glob'
         MistGlobber.doAllGlobs (@delimitDict input.glob, build_vars), @mistDir
+      when 'group' then "!#{input.group}"
       else
         throw "unknown input type '#{input.type}'"
 
