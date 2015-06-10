@@ -150,7 +150,7 @@ module.exports = class MistNinjaBuilder
       else
         tmpFile = tmp.fileSync()
         args.push '-f', tmpFile.name
-        fs.writeSync tmpFile.fd rendered
+        fs.writeSync tmpFile.fd, rendered
         fs.closeSync tmpFile.fd
 
     proc = spawn @ninjaProc, args, opts
