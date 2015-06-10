@@ -34,6 +34,12 @@ module.exports = class MistNinjaBuilder
   load: (dir, contents)->
     MistParser.parse contents,
       mist: @
+      emit: (statement)=>
+        if statement instanceof Array
+          statement.forEach (s)-> s.cwd = dir
+        else
+          statement.cwd = dir
+        @emit statement
 
   writeFile: (filename, options)->
     stream = fs.createWriteStream filename, options
@@ -43,6 +49,9 @@ module.exports = class MistNinjaBuilder
   write: (stream)->
     rendered = @render()
     steam.write rendered
+
+  compile: ->
+
 
   render: -> ''
 

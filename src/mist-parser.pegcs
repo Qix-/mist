@@ -13,10 +13,11 @@
 
 {
   @mist = options.mist
+  @emit = options.emit
 }
 
 mistfile
-  = _? (s:statement _? {@mist.emit s})*
+  = _? (s:statement _? {@emit s})*
   ;
 
 statement
