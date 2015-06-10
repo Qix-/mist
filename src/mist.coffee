@@ -10,6 +10,7 @@
 
 try
   (require 'source-map-support').install()
+
 tmp = require 'tmp'
 fs = require 'fs'
 os = require 'os'
@@ -18,6 +19,8 @@ spawn = (require 'child_process').spawn
 config = require 'commander'
 packageJson = require '../package'
 MistParser = require './mist-parser'
+
+(require './array-utils').install()
 
 ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
