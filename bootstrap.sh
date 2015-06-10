@@ -1,7 +1,10 @@
 #!/bin/bash
 success=true
 
-npm install
+if [ -z "$1" ] || [ "$1" == "npm" ]; then
+  npm install
+  [ ! -z "$1" ] && shift && [ -z "$1" ] && exit
+fi
 
 if [ -z "$1" ] || [ "$1" == "ninja" ]; then
   (cd ext/ninja && ./configure.py --bootstrap) || exit 1
