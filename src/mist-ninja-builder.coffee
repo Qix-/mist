@@ -36,6 +36,8 @@ module.exports = class MistNinjaBuilder
     @load path.dirname(filename), (fs.readFileSync filename).toString()
 
   load: (dir, contents)->
+    MistParser.parse contents,
+      mist: @
 
   writeFile: (filename, options)->
     stream = fs.createWriteStream filename, options

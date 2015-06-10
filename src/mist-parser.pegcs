@@ -12,16 +12,11 @@
  */
 
 {
-  MistNinjaBuilder = require './mist-ninja-builder'
-
-  @builder = new MistNinjaBuilder
-  @builder.setRootDir options.mistdir # TODO: set to root dir, not cd
-  @builder.setDir options.mistdir
+  @mist = options.mist
 }
 
 mistfile
   = _? statements:(s:statement _? {s})*
-    {@builder.render()}
   ;
 
 statement
@@ -51,6 +46,7 @@ statement_rule
       command: command
       main_outputs: main_outputs || []
       aux_outputs: aux_outputs || []
+      groups: groups || []
     }
   ;
 
