@@ -111,6 +111,7 @@ module.exports = class MistNinjaBuilder
             #       to forward populate!
             type: 'target'
             command: commandHash
+            vars: {}
             mainInputs: [input]
             # TODO
 
@@ -134,11 +135,30 @@ module.exports = class MistNinjaBuilder
   render: ->
     compiled = @compile()
     console.log "\x1b[34m", compiled, "\x1b[0m"
-    ''
+    lines = []
+    lines.push2 = (line)-> @push "  #{line}"
+
+    for statement in compiled
+      switch statement.type
+        when 'var' then lines.push "#{statement.name} = #{statement.value}"
+        when 'rule'
+          lines.push "rule #{statement.name}"
+          lines.push2 "command = #{statement.command}"
+        when 'target'
+          build =  "build #{statement.mainInputs.compile().join ' '}: "
+          build += "#{statement.command}"
+          lines.push build
+          for k, v of statement.vars
+            lines.push2 "#{k} = #{v}"
+
+    lines.push '\n'
+    lines.join '\n'
 
   run: (exArgs = [], opts = (stdio:[null, process.stdout, process.stderr]),
       exitcb = process.exit)->
     rendered = @render()
+    console.log '\x1b[36m' + rendered, '\x1b[0m'
+    return # XXX
     args = ['-v', '-C', @rootDir]
 
     switch os.platform()
