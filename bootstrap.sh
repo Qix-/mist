@@ -5,6 +5,9 @@ npm install
 
 if [ -z "$1" ] || [ "$1" == "ninja" ]; then
   (cd ext/ninja && ./configure.py --bootstrap) || exit 1
+  mkdir -p bin/ninja
+  cp -v ext/ninja/ninja bin/ninja/ninja || exit 1
+  cp -v ext/ninja/COPYING bin/ninja/COPYING || exit 1
   [ ! -z "$1" ] && shift && [ -z "$1" ] && exit
 fi
 
