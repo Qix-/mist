@@ -34,5 +34,8 @@ module.exports.install = ->
       else
         @push arr
 
+  Array::linearize = ->
+    @compile().join ' '
+
   String::applyDictionary = (regex, dict)->
     @replace regex, (m, name)-> dict[name] || m

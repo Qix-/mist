@@ -145,11 +145,11 @@ module.exports = class MistNinjaBuilder
           lines.push "rule #{statement.name}"
           lines.push2 "command = #{statement.command}"
         when 'target'
-          build =  "build #{statement.mainInputs.compile().join ' '}: "
+          build =  "build #{statement.mainInputs.linearize()}: "
           build += "#{statement.command}"
           lines.push build
           for k, v of statement.vars
-            lines.push2 "#{k} = #{v}"
+            lines.push2 "#{k} = #{v.linearize()}"
 
     lines.push '\n'
     lines.join '\n'
