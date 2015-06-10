@@ -32,12 +32,12 @@ config
 
 try
   mistfile = Mist::findMistfile()
-  if not mistfile then throw 'Mistfile not found (reached filesystem boundary)'
+  if not mistfile 
+    throw 'Mistfile not found (reached filesystem boundary)'
   mistdir = path.dirname mistfile
 
-  console.log '[mist] evaporating Mistfile:', mistfile
+  console.log 'mist: evaporating Mistfile:', mistfile
 
-  console.log mistdir
   mist = new Mist mistdir
   mist.setNinjaProc ninjaProc
   mist.loadFile mistfile

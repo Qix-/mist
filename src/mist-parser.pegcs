@@ -16,17 +16,15 @@
 }
 
 mistfile
-  = _? statements:(s:statement _? {s})*
+  = _? (s:statement _? {@mist.emit s})*
   ;
 
 statement
-  = s:statement_rule
-    {@builder.addTarget s}
+  = s:statement_target
   / s:statement_vardecl
-    {@builder.setVar s.name, s.val}
   ;
 
-statement_rule
+statement_target
   = ':'
     foreach:(_? "foreach")?
     main_inputs:(_? i:input_list {i})?
@@ -38,7 +36,7 @@ statement_rule
     groups:(_? '->' gs:(_? g:group_name {g})* {gs})?
     ___* _
     {
-      type: 'rule'
+      type: 'target'
       foreach: (if foreach? then yes else no)
       main_inputs: main_inputs || []
       dep_inputs: dep_inputs || []
@@ -109,7 +107,7 @@ statement_vardecl
     {
       type: 'var'
       name: name
-      val: val
+      value: val
     }
   ;
 
@@ -125,15 +123,6 @@ substitute_itr
 
 variable_ref
   = '$(' _? name:variable_name _? ')'
-    {
-      val = @builder.getVar name
-      if val then val
-      else
-        # TODO put in as exception in builder; catch here and gracefully handle
-        console.warn 'mist: unknown variable \'' + name + '\'',
-          '\n    at', options.mistfile + ':' + line() + ':' + column()
-        return ''
-    }
   ;
 
 variable_name
