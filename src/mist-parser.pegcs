@@ -39,13 +39,15 @@ statement_target
     {
       type: 'target'
       foreach: (if foreach? then yes else no)
-      main_inputs: main_inputs || []
-      dep_inputs: dep_inputs || []
-      order_inputs: order_inputs || []
+      mainInputs: main_inputs || []
+      depInputs: dep_inputs || []
+      orderInputs: order_inputs || []
       command: command
-      main_outputs: main_outputs || []
-      aux_outputs: aux_outputs || []
+      mainOutputs: main_outputs || []
+      auxOutputs: aux_outputs || []
       groups: groups || []
+      line: line()
+      column: column()
     }
   ;
 

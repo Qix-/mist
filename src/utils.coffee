@@ -26,3 +26,13 @@ module.exports.install = ->
 
   Array::compile = ->
     @flatten().unique()
+
+  Array::pushAll = (arrs...)->
+    for arr in arrs
+      if arr instanceof Array
+        Array::push.apply @, arr
+      else
+        @push arr
+
+  String::applyDictionary = (regex, dict)->
+    @replace regex, (m, name)-> dict[name] || m
