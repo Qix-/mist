@@ -43,6 +43,8 @@ module.exports = class MistNinjaBuilder
     stream.close()
 
   write: (stream)->
+    rendered = @render()
+    steam.write rendered
 
   render: -> ''
 
