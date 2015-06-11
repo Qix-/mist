@@ -60,6 +60,19 @@ module.exports = class MistNinjaBuilder
   prepareCommand: (command)->
     command.replace /\%([fo])/g, '${_$1}'
 
+  processInput: (input, vars)->
+    results = []
+    switch input.type
+      when 'glob'
+        input = @inlineVariables input.glob, vars
+        results.push MistGlobber.performGlob input, @rootDir
+      when 'group'
+        console.warn 'WARN: groups not yet implemented'
+      else
+        throw "unknown input type: #{input.type}\n" +
+          "  at #{@rootDir}/Mistfile:#{target.line}:#{target.column}"
+    return results
+
   compile: ->
     result = []
 
@@ -90,20 +103,7 @@ module.exports = class MistNinjaBuilder
             commandHash = rules[command]
 
           console.log '\x1b[31m', target, '\x1b[0m'
-          aggInputs = []
-          for input in target.mainInputs
-            switch input.type
-              when 'glob'
-                input = @inlineVariables input.glob, vars
-                aggInputs.push MistGlobber.performGlob input, @rootDir
-              when 'group'
-                console.warn 'WARN: groups not yet implemented'
-              else
-                throw "unknown input type: #{input.type}\n" +
-                  "  at #{@rootDir}/Mistfile:#{target.line}:#{target.column}"
-            if input of targets
-              throw "duplicate input: #{input}\n" +
-                "  at #{@rootDir}/Mistfile:#{target.line}:#{target.column}"
+          aggInputs = target.mainInputs.map (i)=> @processInput i, vars
 
           targets = aggInputs.compile().map (input)=>
             # NOTE: do not flatten arrays here!
