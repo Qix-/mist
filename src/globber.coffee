@@ -48,4 +48,3 @@ module.exports.doAllGlobs = (globs, mistdir)->
   (module.exports.performGlob pattern, mistdir for pattern in globs)
     .flatten()
     .unique()
-
