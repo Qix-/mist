@@ -16,10 +16,15 @@ fi
 
 if [ -z "$1" ] || [ "$1" == "mist" ]; then
   echo -en "\x1b[1;31m"
-  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist.coffee || exit 1
-  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist-ninja-builder.coffee || exit 1
-  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/mist-globber.coffee || exit 1
-  node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin src/utils.coffee || exit 1
+  function cofc {
+    node node_modules/coffee-script/bin/coffee -cbm --no-header -o bin $*
+  }
+  cofc src/mist.coffee || exit 1
+  cofc src/globber.coffee || exit 1
+  cofc src/hasher.coffee || exit 1
+  cofc src/mist-resolver.coffee || exit 1
+  cofc src/mistfile.coffee || exit 1
+  cofc src/utils.coffee || exit 1
   node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/mist-parser.pegcs bin/mist-parser.js || exit 1
   echo -en "\x1b[0m"
   [ ! -z "$1" ] && shift && [ -z "$1" ] && exit
