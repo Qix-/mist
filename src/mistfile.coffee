@@ -19,9 +19,26 @@ module.exports = class Mistfile
   constructor: ->
     @mounts = []
 
+  ###
+  # Creates a new resolver for this mistfile.
+  #
+  # Should only be called on the root-most Mistfile.
+  #
+  # root:
+  #   Absolute path for this mistfile (the folder to resolve against)
+  ###
   resolve: (root)->
-    new Mist
+    new MistResolver root, @
 
+  ###
+  # Mount another Mistfile at a specific relative path
+  #
+  # mist
+  #   The Mistfile object to mount
+  # path
+  #   The path relative to this file for where the Mistfile is
+  #   (for resolution)
+  ###
   mount: (mist, path)->
     @mounts.push
       mist: mist
