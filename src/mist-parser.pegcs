@@ -125,7 +125,7 @@ substitute_itr
   ;
 
 variable_ref
-  = '$(' _? name:variable_name _? ')'
+  = '$'? '$(' _? name:variable_name _? ')'
   ;
 
 variable_name
