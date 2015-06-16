@@ -15,7 +15,8 @@
 # by taking all paths and mounts and resolving the path
 # to them.
 
-MistInput = require './mist-input'
+Hasher = require './hasher'
+MistResolver = require './mist-resolver'
 
 module.exports = class Mistfile
   constructor: (@vars = {})->
