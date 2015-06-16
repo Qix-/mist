@@ -15,11 +15,12 @@
 # by taking all paths and mounts and resolving the path
 # to them.
 
-module.exports = class MistNinja
+module.exports = class Mistfile
   constructor: ->
     @mounts = []
 
   resolve: (root)->
+    new Mist
 
   mount: (mist, path)->
     @mounts.push
