@@ -15,6 +15,7 @@ path = require 'path'
 config = require 'commander'
 packageJson = require '../package'
 Mistfile = require './mistfile'
+NinjaRenderer = require './renderer/ninja'
 
 ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
@@ -39,8 +40,7 @@ try
   console.log 'mist: evaporating Mistfile:', mistfile
 
   mist = Mistfile.fromFile mistfile
-  # TODO finish this.
-  console.log require('util').inspect mist.resolve(mistdir).rootMist, colors:on,depth:null
-  console.log require('util').inspect mist.resolve(mistdir).compile(), colors:on,depth:null
+  resolver = mist.resolve mistdir
+  NinjaRenderer.run resolver, ninjaProc
 catch e
   throw e
