@@ -29,7 +29,6 @@ Hasher = require './hasher'
 
 module.exports = class MistResolver
   constructor: (@rootDir, @rootMist)->
-    @groupSubs = {}
     @groupRefs = {}
 
     @setupTargets()
@@ -44,9 +43,7 @@ module.exports = class MistResolver
       rule.targets = {}
 
   emitGroupOutput: (group, output)->
-    console.log "\x1b[31m", group, output, "\x1b[0m"
     (@groupRefs[group] = @groupRefs[group] || []).push output
-    console.log "\x1b[33m", @groupRefs, "\x1b[0m"
 
   ###
   # Generates templates for dependencies and outputs
@@ -84,18 +81,24 @@ module.exports = class MistResolver
         throw "unknown template type: #{input.type}"
 
   generateTargets: ->
+    groupSubs = {}
+    for rule in @rootMist.rules
+      for input in rule.src.inputs
+        if input.type is 'group'
+          (groupSubs[input.value] = groupSubs[input.value] || []).push rule
+
     for rule in @rootMist.rules
       for input in rule.src.inputs
         switch input.type
           when 'glob'
             results = Globber.performGlob input.value, @rootDir
             for result in results
-              @processInput rule, result
+              @processInput rule, result, null, groupSubs
           when 'group' then break
           else
             throw "unknown input type: #{input.type}"
 
-  processInput: (rule, input, group)->
+  processInput: (rule, input, group, groupSubs = {})->
     return if input of rule.targets
 
     processor = (fn)->
@@ -110,9 +113,15 @@ module.exports = class MistResolver
       outputs: rule.templates.outputs.map processor
       auxOutputs: rule.templates.auxOutputs.map processor
 
+    for k, a of rule.targets[input]
+      rule.targets[input][k] = a.flatten()
+
     for group in rule.src.groups
       for output in rule.targets[input].outputs
-        @emitGroupOutput group, output
+        (@groupRefs[group] = @groupRefs[group] || []).push output
+        if group of groupSubs
+          for rule in groupSubs[group]
+            @processInput rule, output, group, groupSubs
 
 ###
 # Make sure to always include `$1` in the replacement
