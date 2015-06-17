@@ -30,6 +30,7 @@ Hasher = require './hasher'
 module.exports = class MistResolver
   constructor: (@rootDir, @rootMist)->
     @groupSubs = {}
+    @groupRefs = {}
 
     @setupTargets()
     @generateTemplates()
@@ -43,9 +44,9 @@ module.exports = class MistResolver
       rule.targets = {}
 
   emitGroupOutput: (group, output)->
-    if group of @groupSubs
-      for rule in @groupSubs[group]
-        @processInput rule, output, group
+    console.log "\x1b[31m", group, output, "\x1b[0m"
+    (@groupRefs[group] = @groupRefs[group] || []).push output
+    console.log "\x1b[33m", @groupRefs, "\x1b[0m"
 
   ###
   # Generates templates for dependencies and outputs
@@ -75,8 +76,7 @@ module.exports = class MistResolver
         path = MistResolver.delimitPath path, input.value
         Globber.performGlob path, @rootDir
       when 'group'
-        (@groupSubs[input.value] = @groupSubs[input.value] || []).push rule
-        return ->
+        @groupRefs[input.value] = @groupRefs[input.value] || []
       when 'simple' then (path, group)->
         [] if group?
         MistResolver.delimitPath path, input.value
@@ -98,15 +98,17 @@ module.exports = class MistResolver
   processInput: (rule, input, group)->
     return if input of rule.targets
 
+    processor = (fn)->
+      if fn instanceof Function
+        fn input, group
+      else
+        fn
+
     rule.targets[input] =
-      dependencies:
-        rule.templates.dependencies.map (fn)-> fn input, group
-      orderDependencies:
-        rule.templates.orderDependencies.map (fn)-> fn input, group
-      outputs:
-        rule.templates.outputs.map (fn)-> fn input, group
-      auxOutputs:
-        rule.templates.auxOutputs.map (fn)-> fn input, group
+      dependencies: rule.templates.dependencies.map processor
+      orderDependencies: rule.templates.orderDependencies.map processor
+      outputs: rule.templates.outputs.map processor
+      auxOutputs: rule.templates.auxOutputs.map processor
 
     for group in rule.src.groups
       for output in rule.targets[input].outputs

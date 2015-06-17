@@ -96,7 +96,6 @@ module.exports = class Mistfile
 
     @rules.push ref = src: {}
 
-    console.log "\x1b[32m", rule, "\x1b[0m"
     # copy rule as a source 'template'
     ref.src.command = rule.command
     ref.src.inputs = (rule.inputs || []).slice 0
