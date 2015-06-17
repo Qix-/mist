@@ -19,72 +19,12 @@
 
 fs = require 'fs'
 path = require 'path'
-Hasher = require './hasher'
 MistResolver = require './mist-resolver'
 MistParser = require './mist-parser'
 
 module.exports = class Mistfile
   constructor: (@vars = {})->
-    @mounts = []
-
-    # Reference arrays must not be re-assigned. They're referenced by
-    # rules.
-    @refs =
-      globs: {}
-      groups: {}
-      commands: {}
-
     @rules = []
-
-  ###
-  # Gets the array reference to the given glob
-  #
-  # glob:
-  #   The glob string
-  ###
-  getGlobRef: (glob)->
-    if glob not of @refs.globs
-      @refs.globs[glob] = []
-    return @refs.globs[glob]
-
-  ###
-  # Gets the array reference to the given glob
-  #
-  # glob:
-  #   The glob string
-  ###
-  getGroupRef: (group)->
-    if group not of @refs.groups
-      @refs.groups[group] = []
-    return @refs.groups[group]
-
-  ###
-  # Gets the command reference to the given command
-  #
-  # command:
-  #   The command string
-  ###
-  getCommandRef: (command)->
-    if command not of @refs.commands
-      @refs.commands[command] =
-        command: command
-        hash: Hasher.hash command
-        vars: {}
-    return @refs.commands[command]
-
-  ###
-  # Abstract reference retriever
-  #
-  # obj:
-  #   An object:
-  #   {type:String, value:String}
-  ###
-  getRef: (obj)->
-    switch obj.type
-      when 'glob' then @getGlobRef obj.value
-      when 'group' then @getGroupRef obj.value
-      else
-        throw "unknown ref type: #{obj.type}"
 
   ###
   # Sets a parse variable
@@ -154,18 +94,17 @@ module.exports = class Mistfile
     if not rule.command?
       throw 'rules must have a command'
 
-    @rules.push ref = {}
+    @rules.push ref = src: {}, targets: {}
 
-    # resolve refs
-    # this also, in turn, expands the input strings
-    ref.command = @getCommandRef rule.command
-    ref.inputs = @getRef i for i in rule.inputs || []
-    ref.dependencies = @getRef i for i in rule.inputs || []
-    ref.orderDependencies = @getRef i for i in rule.orderDependencies || []
-    ref.outputs = i for i in rule.outputs || []
-    ref.auxOutputs = i for i in rule.auxOutputs || []
-    ref.groups = @getGroupRef i for i in rule.groups || []
-    ref.foreach = !!rule.foreach
+    # copy rule as a source 'template'
+    ref.src.command = rule.command
+    ref.src.inputs = (rule.inputs || []).slice 0
+    ref.src.dependencies = (rule.dependencies || []).slice 0
+    ref.src.orderDependencies = (rule.orderDependencies || []).slice 0
+    ref.src.outputs = (rule.outputs || []).slice 0
+    ref.src.auxOutputs = (rule.auxOutputs || []).slice 0
+    ref.src.groups = (rule.groups || []).slice 0
+    ref.src.foreach = !!rule.foreach
 
   ###
   # Creates a new resolver for this mistfile.
@@ -179,20 +118,6 @@ module.exports = class Mistfile
   ###
   resolve: (root, resolver = MistResolver)->
     new resolver root, @
-
-  ###
-  # Mount another Mistfile at a specific relative path
-  #
-  # mist
-  #   The Mistfile object to mount
-  # path
-  #   The path relative to this file for where the Mistfile is
-  #   (for resolution)
-  ###
-  mount: (mist, path)->
-    @mounts.push
-      mist: mist
-      path: path
 
 ###
 # Looks for a mist file in the given directory or its parents
