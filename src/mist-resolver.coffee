@@ -137,10 +137,39 @@ module.exports = class MistResolver
           for rule in groupSubs[group]
             @processInput rule, output, group, groupSubs
 
+  ###
+  # Compiles the resolved tree into a raw target list
+  ###
   compile: ->
     result =
-      targets: {}
+      targets: []
 
+    compiler = (prop)-> (target)-> target[prop]
+
+    for rule in @rootMist.rules
+      if rule.src.foreach
+        for input, target of rule.targets
+          result.targets.push
+            inputs: [input]
+            dependenies: target.dependencies.compile()
+            orderDependencies: target.orderDependencies.compile()
+            outputs: target.outputs.compile()
+            auxOutputs: target.auxOutputs.compile()
+      else
+        result.targets.push
+          inputs:
+            (k for k of rule.targets).compile()
+          dependencies:
+            (v.dependencies for k, v of rule.targets).compile()
+          orderDependencies:
+            (v.orderDependencies for k, v of rule.targets).compile()
+          outputs:
+            (v.outputs for k, v of rule.targets).compile()
+          auxOutputs:
+            (v.auxOutputs for k, v of rule.targets).compile()
+
+
+    return result
 ###
 # Make sure to always include `$1` in the replacement
 ###
