@@ -19,6 +19,7 @@ fs = require 'fs'
 path = require 'path'
 Hasher = require './hasher'
 MistResolver = require './mist-resolver'
+MistParser = require './mist-parser'
 
 module.exports = class Mistfile
   constructor: (@vars = {})->
@@ -117,8 +118,11 @@ module.exports = class Mistfile
   # Expands a string using the currently configured parse variables
   ###
   expand: (str)->
-    str = str.replace /(?:(?!\$).)\$\(\s*?([a-z0-9_]+)\s*\)/gi, (m, name)=>
-      @expand @get name
+    if typeof str is 'string'
+      return str.replace /(?:(?!\$).)\$\(\s*?([a-z0-9_]+)\s*\)/gi, (m, name)=>
+        @expand @get name
+    else if str.type? and str.value?
+      return type: str.type, value: @expand str.value
 
   ###
   # Adds a rule given inputs and outputs and a command
@@ -226,5 +230,5 @@ Mistfile.fromFile = (filename, vars = {})->
 Mistfile.fromString = (str, vars = {})->
   options =
     mist: new Mistfile vars
-  MistParser.parse str, options
+  MistParser.parse str.toString(), options
   return options.mist
