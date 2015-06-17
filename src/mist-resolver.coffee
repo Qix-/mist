@@ -147,6 +147,8 @@ module.exports = class MistResolver
           for rule in groupSubs[group]
             @processInput rule, output, group, groupSubs
 
+    return null
+
   ###
   # Compiles the resolved tree into a raw target list
   ###
