@@ -1,0 +1,2 @@
+: foreach *.c |> gcc -g2 -c "%f" -o "%o" -Wall -Wextra -Werror |> bin/%B.o -> obj
+: !obj |> gcc -o "%o" %f |> group-test

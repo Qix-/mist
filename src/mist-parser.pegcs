@@ -12,44 +12,39 @@
  */
 
 {
-  MistNinjaBuilder = require './mist-ninja-builder'
-
-  @builder = new MistNinjaBuilder
-  @builder.setRootDir options.mistdir # TODO: set to root dir, not cd
-  @builder.setDir options.mistdir
+  @mist = options.mist
 }
 
 mistfile
-  = _? statements:(s:statement _? {s})+
-    {@builder.render()}
+  = _? (statement _?)*
   ;
 
 statement
-  = s:statement_rule
-    {@builder.addTarget s}
-  / s:statement_vardecl
-    {@builder.setVar s.name, s.val}
+  = statement_rule
+  / statement_vardecl
   ;
 
 statement_rule
   = ':'
     foreach:(_? "foreach")?
-    main_inputs:(_? i:glob_list {i})?
-    dep_inputs:(_? '|' _? i:glob_list {i})?
-    order_inputs:(_? '||' _? i:glob_list {i})?
+    main_inputs:(_? i:input_list {i})?
+    dep_inputs:(_? '|' _? i:input_list {i})?
+    order_inputs:(_? '||' _? i:input_list {i})?
     command:(_? cmd:rule_command {cmd})
     main_outputs:(_? i:delim_path_list {i})?
     aux_outputs:(_? '|' _? i:delim_path_list {i})?
+    groups:(_? '->' gs:(_? g:group_name {g})* {gs})?
     ___* _
     {
-      type: 'rule'
-      foreach: (if foreach? then yes else no)
-      main_inputs: main_inputs || []
-      dep_inputs: dep_inputs || []
-      order_inputs: order_inputs || []
-      command: command
-      main_outputs: main_outputs || []
-      aux_outputs: aux_outputs || []
+      @mist.addRule
+        foreach: foreach
+        inputs: main_inputs
+        dependencies: dep_inputs
+        orderDependencies: order_inputs
+        command: command
+        outputs: main_outputs
+        auxOutputs: aux_outputs
+        groups: groups
     }
   ;
 
@@ -64,6 +59,11 @@ delim_path_list
   ;
 
 delim_path
+  = path:((!'->') p:delim_path_ {p})
+    {type: 'simple', value: path}
+  ;
+
+delim_path_
   = c:delim_path_char+
     {c.join ''}
   ;
@@ -73,14 +73,28 @@ delim_path_char
   / [a-z0-9\/\.\-\_\~\%]i
   ;
 
-glob_list
-  = first:glob others:(_ g:glob {g})* _
+input_list
+  = first:input others:(_ i:input {i})* _
     {[first].concat (others || [])}
+  ;
+
+input
+  = group_ref
+  / glob
+  ;
+
+group_ref
+  = '!' name:group_name
+    {type: 'group', value: name}
+  ;
+
+group_name
+  = $([a-z_]i [a-z0-9_]i*)
   ;
 
 glob
   = cf:glob_char co:(glob_char/'|')*
-    {([cf].concat co).join ''}
+    {type: 'glob', value: ([cf].concat co).join ''}
   ;
 
 glob_char
@@ -90,11 +104,7 @@ glob_char
 
 statement_vardecl
   = name:variable_name _? '=' _? val:substitute_string
-    {
-      type: 'var'
-      name: name
-      val: val
-    }
+    {@mist.set name, val}
   ;
 
 substitute_string
@@ -109,15 +119,7 @@ substitute_itr
 
 variable_ref
   = '$(' _? name:variable_name _? ')'
-    {
-      val = @builder.getVar name
-      if val then val
-      else
-        # TODO put in as exception in builder; catch here and gracefully handle
-        console.warn 'mist: unknown variable \'' + name + '\'',
-          '\n    at', options.mistfile + ':' + line() + ':' + column()
-        return ''
-    }
+    {@mist.get name}
   ;
 
 variable_name
