@@ -200,14 +200,27 @@ MistResolver.hasDelimiters = (str)->
 ###
 # Delimits a template given a pathname
 #
-# Memoized!
-#
 # pathname:
 #   The pathname to use when expanding the templates
 # template:
 #   A delimited template
 ###
 MistResolver.delimitPath = (pathname, template)->
+  dict = MistResolver.generateDict pathname
+
+  template.replace MistResolver.delimiterPattern, (m, p, c)->
+    if c of dict then p + dict[c]
+    else throw "unknown file delimiter: #{c}"
+
+###
+# Generates a delimiter dictionary for a given pathname.
+#
+# Implemented with memoization for slightly better performance.
+#
+# pathname;
+#   The pathname for which to build up a dictionary
+###
+MistResolver.generateDict = (pathname)->
   dict = {}
   if pathname of @
     dict = @[pathname]
@@ -216,11 +229,8 @@ MistResolver.delimitPath = (pathname, template)->
     dict['o'] = '%o'
     dict['b'] = path.basename pathname
     dict['B'] = dict['b'].replace /\..+$/, ''
-
-  template.replace MistResolver.delimiterPattern, (m, p, c)->
-    if c of dict then p + dict[c]
-    else throw "unknown file delimiter: #{c}"
-MistResolver.delimitPath = MistResolver.delimitPath.bind {}
+  return dict
+MistResolver.generateDict = MistResolver.generateDict.bind {}
 
 ###
 # Delimits a command
