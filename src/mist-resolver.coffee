@@ -215,7 +215,7 @@ MistResolver.delimitPath = (pathname, template)->
   dict = MistResolver.generateDict pathname
 
   template.replace MistResolver.delimiterPattern, (m, p, c)->
-    if c of dict then p + dict[c]
+    if c of dict then (p || '') + dict[c]
     else throw "unknown file delimiter: #{c}"
 
 ###
