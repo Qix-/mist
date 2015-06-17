@@ -18,6 +18,7 @@
 path = require 'path'
 os = require 'os'
 tmp = require 'tmp'
+fs = require 'fs'
 spawn = (require 'child_process').spawn
 
 module.exports.render = (resolver)->
