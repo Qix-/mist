@@ -42,9 +42,6 @@ module.exports = class MistResolver
     for rule in @rootMist.rules
       rule.targets = {}
 
-  emitGroupOutput: (group, output)->
-    (@groupRefs[group] = @groupRefs[group] || []).push output
-
   ###
   # Generates templates for dependencies and outputs
   ###
@@ -80,6 +77,10 @@ module.exports = class MistResolver
       else
         throw "unknown template type: #{input.type}"
 
+  ###
+  # Iterates all inputs and generates target outputs,
+  # supplying groups with targets as well
+  ###
   generateTargets: ->
     groupSubs = {}
     for rule in @rootMist.rules
@@ -98,6 +99,19 @@ module.exports = class MistResolver
           else
             throw "unknown input type: #{input.type}"
 
+  ###
+  # Gives a single input to a rule for processing
+  #
+  # rule:
+  #   The rule for which to create a target based on the input
+  # input:
+  #   The input for which to create a target
+  # group:
+  #   A group, if any, that triggered the input
+  # groupSubs:
+  #   A dictionary of group=>rules that are subscribed to receive
+  #   target outputs as inputs to process
+  ###
   processInput: (rule, input, group, groupSubs = {})->
     return if input of rule.targets
 
@@ -122,6 +136,10 @@ module.exports = class MistResolver
         if group of groupSubs
           for rule in groupSubs[group]
             @processInput rule, output, group, groupSubs
+
+  compile: ->
+    result =
+      targets: {}
 
 ###
 # Make sure to always include `$1` in the replacement
