@@ -95,6 +95,7 @@ module.exports = class Mistfile
   ###
   set: (name, val)->
     val = @expand val
+    @vars[name] = val
 
   ###
   # Gets a parse variable's value
@@ -156,13 +157,13 @@ module.exports = class Mistfile
 
     # resolve refs
     # this also, in turn, expands the input strings
-    ref.command = @getCommandRef @expand rule.command
-    ref.inputs = @getRef @expand i for i in rule.inputs || []
-    ref.dependencies = @getRef @expand i for i in rule.inputs || []
-    ref.orderDependencies = @getRef @expand i for i in rule.orderDependencies || []
-    ref.outputs = @expand i for i in rule.outputs || []
-    ref.auxOutputs = @expand i for i in rule.auxOutputs || []
-    ref.groups = @getGroupRef @expand i for i in rule.groups || []
+    ref.command = @getCommandRef rule.command
+    ref.inputs = @getRef i for i in rule.inputs || []
+    ref.dependencies = @getRef i for i in rule.inputs || []
+    ref.orderDependencies = @getRef i for i in rule.orderDependencies || []
+    ref.outputs = i for i in rule.outputs || []
+    ref.auxOutputs = i for i in rule.auxOutputs || []
+    ref.groups = @getGroupRef i for i in rule.groups || []
     ref.foreach = !!rule.foreach
 
   ###
