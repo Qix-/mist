@@ -9,7 +9,8 @@
     "url": "https://github.com/AERO-ff/mist"
   },
   "bin": {
-    "mist": "bin/mist.run.js"
+    "mist": "bin/mist.run.js",
+    "mist-glob": "bin/mist-glob.run.js"
   },
   "bugs": {
     "url": "https://github.com/AERO-ff/mist/issues"
