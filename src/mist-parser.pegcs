@@ -13,19 +13,18 @@
 
 {
   @mist = options.mist
-  @emit = options.emit
 }
 
 mistfile
-  = _? (s:statement _? {@emit s})*
+  = _? (statement _?)*
   ;
 
 statement
-  = s:statement_target
-  / s:statement_vardecl
+  = statement_rule
+  / statement_vardecl
   ;
 
-statement_target
+statement_rule
   = ':'
     foreach:(_? "foreach")?
     main_inputs:(_? i:input_list {i})?
@@ -37,17 +36,15 @@ statement_target
     groups:(_? '->' gs:(_? g:group_name {g})* {gs})?
     ___* _
     {
-      type: 'target'
-      foreach: (if foreach? then yes else no)
-      mainInputs: main_inputs || []
-      depInputs: dep_inputs || []
-      orderInputs: order_inputs || []
-      command: command
-      mainOutputs: main_outputs || []
-      auxOutputs: aux_outputs || []
-      groups: groups || []
-      line: line()
-      column: column()
+      @mist.addRule
+        foreach: foreach
+        inputs: main_inputs
+        dependenies: dep_inputs
+        orderDependencies: order_inputs
+        command: command
+        outputs: main_outputs
+        auxOutputs: aux_outputs
+        groups: groups
     }
   ;
 
@@ -107,11 +104,7 @@ glob_char
 
 statement_vardecl
   = name:variable_name _? '=' _? val:substitute_string
-    {
-      type: 'var'
-      name: name
-      value: val
-    }
+    {@mist.set name, val}
   ;
 
 substitute_string
@@ -125,7 +118,8 @@ substitute_itr
   ;
 
 variable_ref
-  = '$'? '$(' _? name:variable_name _? ')'
+  = '$(' _? name:variable_name _? ')'
+    {@mist.get name}
   ;
 
 variable_name

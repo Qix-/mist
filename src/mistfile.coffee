@@ -15,6 +15,8 @@
 # by taking all paths and mounts and resolving the path
 # to them.
 
+fs = require 'fs'
+path = require 'path'
 Hasher = require './hasher'
 MistResolver = require './mist-resolver'
 
@@ -92,8 +94,6 @@ module.exports = class Mistfile
   ###
   set: (name, val)->
     val = @expand val
-    @vars[name] = val.replace /\$\$\(\s*?([a-z0-9_]+)\s*\)/gi, (m, name)->
-      "$(#{name})"
 
   ###
   # Gets a parse variable's value
@@ -185,3 +185,46 @@ module.exports = class Mistfile
     @mounts.push
       mist: mist
       path: path
+
+###
+# Looks for a mist file in the given directory or its parents
+#
+# from:
+#   The path from which to look for a Mistfile (traverses upward)
+###
+Mistfile.find = (from = process.cwd())->
+  lastPath = ''
+  loop
+    lastPath = from
+    mistPath = path.join from, 'Mistfile'
+    try
+      stat = fs.statSync mistPath
+      return mistPath if stat.isFile()
+    break if (from = path.dirname from) is lastPath
+  return null
+
+###
+# Reads a file in and parses it as Mistfile syntax, returning a
+# new Mistfile object
+#
+# filename:
+#   The path of the file to read
+# vars:
+#   Initial parse variables to use when parsing
+###
+Mistfile.fromFile = (filename, vars = {})->
+  Mistfile.fromString fs.readFileSync(filename), vars
+
+###
+# Parses a string as Mistfile syntax, returning a new Mistfile object
+#
+# str:
+#   The string contents to parse
+# vars:
+#   Initial parse variables to use when parsing
+###
+Mistfile.fromString = (str, vars = {})->
+  options =
+    mist: new Mistfile vars
+  MistParser.parse str, options
+  return options.mist

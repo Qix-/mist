@@ -14,7 +14,7 @@ try
 path = require 'path'
 config = require 'commander'
 packageJson = require '../package'
-Mist = require './mist-ninja-builder'
+Mistfile = require './mistfile'
 
 ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
@@ -31,16 +31,15 @@ config
   .parse mistArgs
 
 try
-  mistfile = Mist::findMistfile()
+  mistfile = Mistfile.find()
   if not mistfile 
     throw 'Mistfile not found (reached filesystem boundary)'
   mistdir = path.dirname mistfile
 
   console.log 'mist: evaporating Mistfile:', mistfile
 
-  mist = new Mist mistdir
-  mist.setNinjaProc ninjaProc
-  mist.loadFile mistfile
-  mist.run()
+  mist = Mistfile.fromFile mistfile
+  # TODO finish this.
+  console.log require('util').inspect mist.resolve().rootMist, colors:on,depth:null
 catch e
   throw e
