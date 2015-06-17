@@ -31,9 +31,19 @@ module.exports = class MistResolver
   constructor: (@rootDir, @rootMist)->
     @groupRefs = {}
 
+    @compileCommands()
     @setupTargets()
     @generateTemplates()
     @generateTargets()
+
+  ###
+  # Compiles all commands
+  ###
+  compileCommands: ->
+    for rule in @rootMist.rules
+      rule.command =
+        hash: Hasher.hash rule.src.command
+        command: MistResolver.delimitCommand rule.src.command
 
   ###
   # Creates a targets object for each rule
@@ -143,13 +153,16 @@ module.exports = class MistResolver
   compile: ->
     result =
       targets: []
-
-    compiler = (prop)-> (target)-> target[prop]
+      commands: {}
 
     for rule in @rootMist.rules
+      result.commands[rule.command.hash] =
+        command: rule.command.command
+
       if rule.src.foreach
         for input, target of rule.targets
           result.targets.push
+            command: rule.command.hash
             inputs: [input]
             dependenies: target.dependencies.compile()
             orderDependencies: target.orderDependencies.compile()
@@ -157,6 +170,7 @@ module.exports = class MistResolver
             auxOutputs: target.auxOutputs.compile()
       else
         result.targets.push
+          command: rule.command.hash
           inputs:
             (k for k of rule.targets).compile()
           dependencies:
@@ -168,12 +182,11 @@ module.exports = class MistResolver
           auxOutputs:
             (v.auxOutputs for k, v of rule.targets).compile()
 
-
     return result
 ###
 # Make sure to always include `$1` in the replacement
 ###
-MistResolver.delimiterPattern = /((?!\%).)?%([fbB])/g
+MistResolver.delimiterPattern = /((?!\%).)?%([fbBo])/g
 
 ###
 # Returns whether or not a string has filename delimiters present
@@ -200,11 +213,20 @@ MistResolver.delimitPath = (pathname, template)->
     dict = @[pathname]
   else
     dict['f'] = pathname
+    dict['o'] = '%o'
     dict['b'] = path.basename pathname
     dict['B'] = dict['b'].replace /\..+$/, ''
 
   template.replace MistResolver.delimiterPattern, (m, p, c)->
     if c of dict then p + dict[c]
     else throw "unknown file delimiter: #{c}"
-
 MistResolver.delimitPath = MistResolver.delimitPath.bind {}
+
+###
+# Delimits a command
+#
+# command:
+#   The command to delimit
+###
+MistResolver.delimitCommand = (command)->
+  command.replace MistResolver.delimiterPattern, "$1${D_$2}"
