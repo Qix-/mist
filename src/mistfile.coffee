@@ -15,6 +15,8 @@
 # by taking all paths and mounts and resolving the path
 # to them.
 
+(require './utils').install()
+
 fs = require 'fs'
 path = require 'path'
 Hasher = require './hasher'
@@ -26,8 +28,7 @@ module.exports = class Mistfile
     @mounts = []
 
     # Reference arrays must not be re-assigned. They're referenced by
-    # rules. For instance, the resolver uses the globs by popping the
-    # first element as the glob string and then pushing back the results.
+    # rules.
     @refs =
       globs: {}
       groups: {}

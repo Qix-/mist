@@ -40,6 +40,6 @@ try
 
   mist = Mistfile.fromFile mistfile
   # TODO finish this.
-  console.log require('util').inspect mist.resolve().rootMist, colors:on,depth:null
+  console.log require('util').inspect mist.resolve(mistdir).rootMist, colors:on,depth:null
 catch e
   throw e
