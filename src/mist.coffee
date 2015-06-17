@@ -41,6 +41,6 @@ try
 
   mist = Mistfile.fromFile mistfile
   resolver = mist.resolve mistdir
-  NinjaRenderer.run resolver, ninjaProc
+  NinjaRenderer.run resolver, ninjaArgs, ninjaProc
 catch e
   throw e

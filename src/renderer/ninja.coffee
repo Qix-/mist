@@ -76,6 +76,6 @@ module.exports.run = (resolver, exArgs = [],
       fs.writeSync tmpFile.fd, rendered
       fs.closeSync tmpFile.fd
 
-  proc = spawn proc, args, opts
+  proc = spawn proc, args.concat(exArgs), opts
   proc.on 'exit', exitcb if exitcb
   cb proc if cb
