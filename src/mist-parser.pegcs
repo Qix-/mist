@@ -39,7 +39,7 @@ statement_rule
       @mist.addRule
         foreach: foreach
         inputs: main_inputs
-        dependenies: dep_inputs
+        dependencies: dep_inputs
         orderDependencies: order_inputs
         command: command
         outputs: main_outputs
@@ -60,7 +60,7 @@ delim_path_list
 
 delim_path
   = path:((!'->') p:delim_path_ {p})
-    {path}
+    {type: 'simple', value: path}
   ;
 
 delim_path_
