@@ -174,9 +174,11 @@ module.exports = class Mistfile
   #
   # root:
   #   Absolute path for this mistfile (the folder to resolve against)
+  # resolver:
+  #   The resolver to use
   ###
-  resolve: (root)->
-    new MistResolver root, @
+  resolve: (root, resolver = MistResolver)->
+    new resolver root, @
 
   ###
   # Mount another Mistfile at a specific relative path
