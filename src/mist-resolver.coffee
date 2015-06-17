@@ -161,24 +161,30 @@ module.exports = class MistResolver
 
       if rule.src.foreach
         for input, target of rule.targets
+          outputs = target.outputs.compile()
+          inputs = [input]
           result.targets.push
-            command: rule.command.hash
-            inputs: [input]
+            command:
+              name: rule.command.hash
+              vars: MistResolver.compileVars inputs, outputs
+            inputs: inputs
             dependenies: target.dependencies.compile()
             orderDependencies: target.orderDependencies.compile()
-            outputs: target.outputs.compile()
+            outputs: outputs
             auxOutputs: target.auxOutputs.compile()
       else
+        inputs = (k for k of rule.targets).compile()
+        outputs = (v.outputs for k, v of rule.targets).compile()
         result.targets.push
-          command: rule.command.hash
-          inputs:
-            (k for k of rule.targets).compile()
+          command:
+            name: rule.command.hash
+            vars: MistResolver.compileVars inputs, outputs
+          inputs: inputs
           dependencies:
             (v.dependencies for k, v of rule.targets).compile()
           orderDependencies:
             (v.orderDependencies for k, v of rule.targets).compile()
-          outputs:
-            (v.outputs for k, v of rule.targets).compile()
+          outputs: outputs
           auxOutputs:
             (v.auxOutputs for k, v of rule.targets).compile()
 
@@ -240,3 +246,15 @@ MistResolver.generateDict = MistResolver.generateDict.bind {}
 ###
 MistResolver.delimitCommand = (command)->
   command.replace MistResolver.delimiterPattern, "$1${D_$2}"
+
+MistResolver.compileVars = (inputs, outputs)->
+  result = {}
+  for input in inputs.map MistResolver.generateDict
+    for k, v of input
+      if k is 'o' then v = outputs
+      k = "D_#{k}"
+      result[k] = [] if k not of result
+      result[k] = result[k].concat v
+  for k, v of result
+    result[k] = v.unique().linearize()
+  return result
