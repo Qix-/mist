@@ -17,7 +17,7 @@
 
 # The methodology for the resolver:
 # 1) Generate templates for (order) dependencies and (aux) outputs
-# 2) Generate a separate target for each globbed input
+# 2) Generate a separate target for each globbed/grouped input
 # 3) Run each resulting input through the previously generated templates
 # 4) Run generated outputs as inputs for each rule relying on target group
 # 4) Compile down non-foreach rules
@@ -29,8 +29,23 @@ Hasher = require './hasher'
 
 module.exports = class MistResolver
   constructor: (@rootDir, @rootMist)->
-    # generate templates
+    @groupSubs = {}
+
+    @setupTargets()
     @generateTemplates()
+    @generateTargets()
+
+  ###
+  # Creates a targets object for each rule
+  ###
+  setupTargets: ->
+    for rule in @rootMist.rules
+      rule.targets = {}
+
+  emitGroupOutput: (group, output)->
+    if group of @groupSubs
+      for rule in @groupSubs[group]
+        @processInput rule, output, group
 
   ###
   # Generates templates for dependencies and outputs
@@ -50,49 +65,52 @@ module.exports = class MistResolver
   #
   # input:
   #   The input pair generated from the parser
+  # rule:
+  #   The rule for this input
   ###
-  makeTemplate: (input)->
+  makeTemplate: (input, rule)->
     switch input.type
       when 'glob' then (path, group)=>
         [] if group?
         path = MistResolver.delimitPath path, input.value
         Globber.performGlob path, @rootDir
-      when 'group' then (path, group)->
-        if group is input.value then [path] else []
+      when 'group'
+        (@groupSubs[input.value] = @groupSubs[input.value] || []).push rule
+        return ->
       when 'simple' then (path, group)->
         [] if group?
         MistResolver.delimitPath path, input.value
       else
-        throw "unknown input type: #{input.type}"
-  ###
-  # Resolves globs for files that exist on the filesystem itself
-  ###
-  resolveRules: ->
+        throw "unknown template type: #{input.type}"
+
+  generateTargets: ->
     for rule in @rootMist.rules
-      # generate templates
-
-      # inputs
       for input in rule.src.inputs
-        if input.type is 'glob'
-          results = Globber.performGlob input.value, @rootDir
-          @processInput rule, result for result in results
+        switch input.type
+          when 'glob'
+            results = Globber.performGlob input.value, @rootDir
+            for result in results
+              @processInput rule, result
+          when 'group' then break
+          else
+            throw "unknown input type: #{input.type}"
 
-  ###
-  # Processes the input for a rule and compiles a number of targets for the
-  # rule, pushing outputs to associated groups.
-  #
-  # This is the meat of Mist.
-  #
-  # rule:
-  #   The rule for which to add an input
-  # input:
-  #   The input to process
-  ###
-  processInput: (rule, input)->
+  processInput: (rule, input, group)->
     return if input of rule.targets
 
     rule.targets[input] =
-      dependencies: MistResolver.delimitPaths input, rule.src.dependencies
+      dependencies:
+        rule.templates.dependencies.map (fn)-> fn input, group
+      orderDependencies:
+        rule.templates.orderDependencies.map (fn)-> fn input, group
+      outputs:
+        rule.templates.outputs.map (fn)-> fn input, group
+      auxOutputs:
+        rule.templates.auxOutputs.map (fn)-> fn input, group
+
+    for group in rule.src.groups
+      for output in rule.targets[input].outputs
+        @emitGroupOutput group, output
 
 ###
 # Make sure to always include `$1` in the replacement
@@ -118,7 +136,7 @@ MistResolver.hasDelimiters = (str)->
 # template:
 #   A delimited template
 ###
-MistResolver.delimitPath = (pathname, templates)->
+MistResolver.delimitPath = (pathname, template)->
   dict = {}
   if pathname of @
     dict = @[pathname]

@@ -94,7 +94,7 @@ module.exports = class Mistfile
     if not rule.command?
       throw 'rules must have a command'
 
-    @rules.push ref = src: {}, targets: {}
+    @rules.push ref = src: {}
 
     console.log "\x1b[32m", rule, "\x1b[0m"
     # copy rule as a source 'template'
