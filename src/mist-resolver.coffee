@@ -168,7 +168,7 @@ module.exports = class MistResolver
               name: rule.command.hash
               vars: MistResolver.compileVars inputs, outputs
             inputs: inputs
-            dependenies: target.dependencies.compile()
+            dependencies: target.dependencies.compile()
             orderDependencies: target.orderDependencies.compile()
             outputs: outputs
             auxOutputs: target.auxOutputs.compile()
