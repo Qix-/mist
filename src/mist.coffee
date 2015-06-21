@@ -19,6 +19,8 @@ Command = config.constructor
 
 (exports.build = new Command 'build')
   .description 'build the project'
+(exports.clean = new Command 'clean')
+  .description 'clean the project'
 (exports.glob = new Command 'glob [globs...]')
   .description 'test globs for file selection'
 (exports.render = new Command 'render')
