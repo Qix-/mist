@@ -29,7 +29,7 @@ for a, i in process.argv.slice 2
 
 config
   .version packageJson.version
-  .parse mistArgs
+  .parse process.argv.slice(0, 2).concat mistArgs
 
 try
   mistfile = Mistfile.find()
