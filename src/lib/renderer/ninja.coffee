@@ -63,7 +63,7 @@ module.exports.run = (resolver, exArgs = [],
 
   rendered = module.exports.render resolver
 
-  args = ['-v', '-C', resolver.rootDir]
+  args = ['-v', '-w', 'dupbuild=err', '-C', resolver.rootDir]
 
   switch os.platform()
     when 'darwin' or 'linux'
