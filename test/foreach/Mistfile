@@ -1,3 +1,0 @@
-BIN = bin
-
-: foreach a b c d e f h i j |> cp "%f" "%o" |> $(BIN)/%B.o
