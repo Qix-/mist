@@ -1,16 +1,8 @@
 #!/bin/bash
 success=true
 
-if [ -z "$1" ] || [ "$1" == "npm" ]; then
-  npm install
-  [ ! -z "$1" ] && shift && [ -z "$1" ] && exit
-fi
-
-if [ -z "$1" ] || [ "$1" == "ninja" ]; then
-  (cd ext/ninja && ./configure.py --bootstrap) || exit 1
-  mkdir -p bin/ninja
-  cp -v ext/ninja/ninja bin/ninja/ninja || exit 1
-  cp -v ext/ninja/COPYING bin/ninja/COPYING || exit 1
+if [ -z "$1" ] || [ "$1" == "deps" ]; then
+  npm install || exit 1
   [ ! -z "$1" ] && shift && [ -z "$1" ] && exit
 fi
 
@@ -30,11 +22,11 @@ if [ -z "$1" ] || [ "$1" == "mist" ]; then
   cofc lib/renderer src/lib/renderer/ninja.coffee || exit 1
   node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/lib/mist-parser.pegcs lib/mist-parser.js || exit 1
   echo -en "\x1b[0m"
+  NINJA=`pwd`/bin/ninja/ninja node bin/mist.js || exit 1
   [ ! -z "$1" ] && shift && [ -z "$1" ] && exit
 fi
 
 if [ -z "$1" ] || [ "$1" == "test" ]; then
-  NINJA=`pwd`/ext/ninja/ninja node bin/mist.js
   (cd test/hello && node ../../bin/mist.js) && test/hello/hello-mist || exit 1
   (cd test/foreach && node ../../bin/mist.js) || exit 1
   (cd test/group && node ../../bin/mist.js) || exit 1

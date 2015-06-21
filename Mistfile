@@ -13,6 +13,3 @@ stdcoffee = cat "%f" | $(coffee) -cbmsp --no-header > "%o"
 
 # parser
 : foreach src/lib/*.pegcs |> $(pegcs) -o speed "%f" "%o" |> lib/%B.js
-
-# ninja executable
-: foreach ext/ninja/ninja ext/ninja/COPYING |> $(copy) |> bin/ninja/%b
