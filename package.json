@@ -18,6 +18,9 @@
   "bugs": {
     "url": "https://github.com/AERO-ff/mist/issues"
   },
+  "scripts": {
+    "postinstall": "node script/install-ninja.js"
+  },
   "keywords": [
     "build",
     "system",
