@@ -14,8 +14,6 @@ try
 config = require 'commander'
 packageJson = require '../package'
 
-ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
-
 config
   .version packageJson.version
 config
