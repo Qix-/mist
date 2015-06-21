@@ -20,16 +20,13 @@ ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
 config.parse process.argv
 
-try
-  mistfile = Mistfile.find()
-  if not mistfile 
-    throw 'Mistfile not found (reached filesystem boundary)'
-  mistdir = path.dirname mistfile
+mistfile = Mistfile.find()
+if not mistfile 
+  throw 'Mistfile not found (reached filesystem boundary)'
+mistdir = path.dirname mistfile
 
-  console.log 'mist: evaporating Mistfile:', mistfile
+console.log 'mist: evaporating Mistfile:', mistfile
 
-  mist = Mistfile.fromFile mistfile
-  resolver = mist.resolve mistdir
-  NinjaRenderer.run resolver, null, ninjaProc
-catch e
-  throw e
+mist = Mistfile.fromFile mistfile
+resolver = mist.resolve mistdir
+NinjaRenderer.run resolver, null, ninjaProc
