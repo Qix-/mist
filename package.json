@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/AERO-ff/mist"
   },
+  "main": "lib/mistfile.js",
   "bin": {
     "mist": "bin/mist.js",
     "mist-build": "bin/mist-build.js",

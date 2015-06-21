@@ -19,7 +19,9 @@ if [ -z "$1" ] || [ "$1" == "mist" ]; then
   function cofc {
     node node_modules/coffee-script/bin/coffee -cbm --no-header -o $*
   }
+  # only the bare necessities to get mist to build itself
   cofc bin src/mist.coffee || exit 1
+  cofc bin src/mist-build.coffee || exit 1
   cofc lib src/lib/globber.coffee || exit 1
   cofc lib src/lib/hasher.coffee || exit 1
   cofc lib src/lib/mist-resolver.coffee || exit 1
