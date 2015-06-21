@@ -12,7 +12,8 @@
   "bin": {
     "mist": "bin/mist.js",
     "mist-build": "bin/mist-build.js",
-    "mist-glob": "bin/mist-glob.js"
+    "mist-glob": "bin/mist-glob.js",
+    "mist-render": "bin/mist-render.js"
   },
   "bugs": {
     "url": "https://github.com/AERO-ff/mist/issues"
