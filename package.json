@@ -34,6 +34,7 @@
   "preferGlobal": true,
   "devDependencies": {
     "coffee-script": "^1.9.3",
+    "mocha": "^2.2.5",
     "pegjs": "^0.8.0",
     "pegjs-coffee-plugin": "^0.2.2",
     "source-map-support": "git://github.com/Qix-/node-source-map-support#e8a586779845"
