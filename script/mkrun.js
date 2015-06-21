@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 
-fs.writeFileSync(process.argv[3],
+fs.writeFileSync(process.argv[2],
     [
       '#!/bin/sh',
       '\':\' //; exec "$(command -v nodejs || command -v node)" "$0" "$@"',

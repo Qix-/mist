@@ -14,8 +14,8 @@ try
 path = require 'path'
 config = require 'commander'
 packageJson = require '../package'
-Mistfile = require './mistfile'
-NinjaRenderer = require './renderer/ninja'
+Mistfile = require '../lib/mistfile'
+NinjaRenderer = require '../lib/renderer/ninja'
 
 ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
@@ -29,7 +29,7 @@ for a, i in process.argv.slice 2
 
 config
   .version packageJson.version
-  .command 'glob [globs...]', 'Tests globs for file selection'
+#  .command 'glob [globs...]', 'Tests globs for file selection'
   .parse process.argv.slice(0, 2).concat mistArgs
 
 try

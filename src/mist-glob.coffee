@@ -9,7 +9,7 @@
  # Copyright (c) 2015 On Demand Solutions, inc.
 
 path = require 'path'
-Globber = require './globber'
+Globber = require '../lib/globber'
 
 for pattern in process.argv.slice 2
   results = Globber.performGlob pattern, process.cwd()

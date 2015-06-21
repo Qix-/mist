@@ -1,5 +1,7 @@
 *.sw[a-p]
 /node_modules/
+/.mist/
 /bin/
+/lib/
 .ninja_*
 npm-debug.log
