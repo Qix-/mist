@@ -15,18 +15,18 @@ path = require 'path'
 config = require 'commander'
 packageJson = require '../package'
 
-exports.config =
-  config
-    .version packageJson.version
+Command = config.constructor
 
-exports.options =
-  build:
-    config
-      .command 'build [options]', 'build the project', isDefault: yes
-  glob:
-    config
-      .command 'glob [globs...]', 'test globs for file selection'
+(exports.build = new Command 'build')
+  .description 'build the project'
+(exports.glob = new Command 'glob [globs...]')
+  .description 'test globs for file selection'
 
 if path.basename(process.argv[1], '.js') is 'mist'
+  config.executables = on
+  config.defaultExecutable = 'build'
+  for k, v of exports
+    config.commands.push v
+    config._execs[k] = on
   config
     .parse process.argv

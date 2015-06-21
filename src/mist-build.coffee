@@ -14,8 +14,11 @@ try
 path = require 'path'
 Mistfile = require '../lib/mistfile'
 NinjaRenderer = require '../lib/renderer/ninja'
+config = (require './mist').build
 
 ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
+
+config.parse process.argv
 
 try
   mistfile = Mistfile.find()
