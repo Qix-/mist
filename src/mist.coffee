@@ -11,37 +11,16 @@
 try
   (require 'source-map-support').install()
 
-path = require 'path'
 config = require 'commander'
 packageJson = require '../package'
-Mistfile = require '../lib/mistfile'
-NinjaRenderer = require '../lib/renderer/ninja'
 
 ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
-ninjaArgs = []
-mistArgs = []
-for a, i in process.argv.slice 2
-  if a is '--'
-    ninjaArgs = process.argv.slice i+3
-    break
-  else mistArgs.push a
-
 config
   .version packageJson.version
-#  .command 'glob [globs...]', 'Tests globs for file selection'
-  .parse process.argv.slice(0, 2).concat mistArgs
-
-try
-  mistfile = Mistfile.find()
-  if not mistfile 
-    throw 'Mistfile not found (reached filesystem boundary)'
-  mistdir = path.dirname mistfile
-
-  console.log 'mist: evaporating Mistfile:', mistfile
-
-  mist = Mistfile.fromFile mistfile
-  resolver = mist.resolve mistdir
-  NinjaRenderer.run resolver, ninjaArgs, ninjaProc
-catch e
-  throw e
+config
+  .command 'build [options]', 'build the project', isDefault: yes
+config
+  .command 'glob [globs...]', 'test globs for file selection'
+config
+  .parse process.argv

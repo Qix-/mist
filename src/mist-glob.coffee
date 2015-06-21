@@ -8,6 +8,9 @@
  #             MIST BUILD SYSTEM
  # Copyright (c) 2015 On Demand Solutions, inc.
 
+try
+  (require 'source-map-support').install()
+
 path = require 'path'
 Globber = require '../lib/globber'
 
