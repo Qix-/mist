@@ -21,6 +21,9 @@ Command = config.constructor
   .description 'build the project'
 (exports.glob = new Command 'glob [globs...]')
   .description 'test globs for file selection'
+(exports.render = new Command 'render')
+  .description 'render project Mistfiles to Ninja configuration files'
+  .option '--out [build.ninja]', 'the output file', 'build.ninja'
 
 if path.basename(process.argv[1], '.js') is 'mist'
   config.executables = on

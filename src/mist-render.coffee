@@ -11,12 +11,11 @@
 try
   (require 'source-map-support').install()
 
+fs = require 'fs'
 path = require 'path'
 Mistfile = require '../lib/mistfile'
 NinjaRenderer = require '../lib/renderer/ninja'
-config = (require './mist').build
-
-ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
+config = (require './mist').render
 
 config.parse process.argv
 
@@ -29,4 +28,6 @@ console.log 'mist: evaporating Mistfile:', mistfile
 
 mist = Mistfile.fromFile mistfile
 resolver = mist.resolve mistdir
-NinjaRenderer.run resolver, null, ninjaProc
+rendered = NinjaRenderer.render resolver
+fs.writeFileSync config.out, rendered
+console.log 'mist: rendered to', config.out
