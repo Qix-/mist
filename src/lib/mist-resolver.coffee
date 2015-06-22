@@ -194,7 +194,7 @@ module.exports = class MistResolver
 ###
 # Make sure to always include `$1` in the replacement
 ###
-MistResolver.delimiterPattern = /((?!\%).)?%([fbBo])/g
+MistResolver.delimiterPattern = /((?!\%).)?%([fbBoO])/g
 
 ###
 # Returns whether or not a string has filename delimiters present
@@ -235,6 +235,7 @@ MistResolver.generateDict = (pathname)->
   else
     dict['f'] = pathname
     dict['o'] = '%o'
+    dict['O'] = '%O'
     dict['b'] = path.basename pathname
     dict['B'] = dict['b'].replace /\..+$/, ''
   return dict
@@ -254,6 +255,7 @@ MistResolver.compileVars = (inputs, outputs)->
   for input in inputs.map MistResolver.generateDict
     for k, v of input
       if k is 'o' then v = outputs
+      if k is 'O' then v = outputs.map path.dirname
       k = "D_#{k}"
       result[k] = [] if k not of result
       result[k] = result[k].concat v
