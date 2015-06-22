@@ -10,11 +10,7 @@
   },
   "main": "lib/mistfile.js",
   "bin": {
-    "mist": "bin/mist.js",
-    "mist-build": "bin/mist-build.js",
-    "mist-glob": "bin/mist-glob.js",
-    "mist-render": "bin/mist-render.js",
-    "mist-clean": "bin/mist-clean.js"
+    "mist": "bin/mist.js"
   },
   "bugs": {
     "url": "https://github.com/AERO-ff/mist/issues"

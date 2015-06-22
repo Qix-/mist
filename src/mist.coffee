@@ -17,21 +17,27 @@ packageJson = require '../package'
 
 Command = config.constructor
 
-(exports.build = new Command 'build')
+config.command 'build'
   .description 'build the project'
-(exports.clean = new Command 'clean')
-  .description 'clean the project'
-(exports.glob = new Command 'glob [globs...]')
-  .description 'test globs for file selection'
-(exports.render = new Command 'render')
-  .description 'render project Mistfiles to Ninja configuration files'
-  .option '--out [build.ninja]', 'the output file', 'build.ninja'
+  .action require './mist-build'
+config.command 'clean'
+  .description 'clean the project of all outputs'
+  .action require './mist-clean'
+config.command 'glob [globs...]'
+  .description 'test file globbing patterns'
+  .action require './mist-glob'
+config.command 'render'
+  .description 'render Ninja configuration to a file'
+  .option '--out <file>', 'the filename of the rendered configuration',
+    'build.ninja'
+  .action require './mist-render'
 
-if path.basename(process.argv[1], '.js') is 'mist'
-  config.executables = on
-  config.defaultExecutable = 'build'
-  for k, v of exports
-    config.commands.push v
-    config._execs[k] = on
-  config
-    .parse process.argv
+# default
+argv = process.argv
+if 2 not of process.argv
+  argv = process.argv.slice(0, 2).concat(['build']).concat process.argv.slice 2
+else if process.argv[2] not of config._events
+  if '--help' not in process.argv
+    throw "unknown sub-command: #{process.argv[2]}"
+
+config.parse argv

@@ -8,25 +8,20 @@
  #             MIST BUILD SYSTEM
  # Copyright (c) 2015 On Demand Solutions, inc.
 
-try
-  (require 'source-map-support').install()
+module.exports = (config)->
+  path = require 'path'
+  Mistfile = require '../lib/mistfile'
+  NinjaRenderer = require '../lib/renderer/ninja'
 
-path = require 'path'
-Mistfile = require '../lib/mistfile'
-NinjaRenderer = require '../lib/renderer/ninja'
-config = (require './mist').build
+  ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
-ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
+  mistfile = Mistfile.find()
+  if not mistfile
+    throw 'Mistfile not found (reached filesystem boundary)'
+  mistdir = path.dirname mistfile
 
-config.parse process.argv
+  console.log 'mist: evaporating Mistfile:', mistfile
 
-mistfile = Mistfile.find()
-if not mistfile
-  throw 'Mistfile not found (reached filesystem boundary)'
-mistdir = path.dirname mistfile
-
-console.log 'mist: evaporating Mistfile:', mistfile
-
-mist = Mistfile.fromFile mistfile
-resolver = mist.resolve mistdir
-NinjaRenderer.run resolver, null, ninjaProc
+  mist = Mistfile.fromFile mistfile
+  resolver = mist.resolve mistdir
+  NinjaRenderer.run resolver, null, ninjaProc
