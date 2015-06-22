@@ -3,7 +3,7 @@ instrumentation:
   excludes:
     - script/**/*
     - node_modules/**/*
-    - lib/mist-parser.js
+    - lib/parser/**/*
     # Currently, the sourcemap compiler for lcov data doesn't know how to handle
     # sources with no sourcemap. I'll have to write a patch for this at some
     # point.
