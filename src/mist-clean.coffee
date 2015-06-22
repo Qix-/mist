@@ -24,4 +24,5 @@ module.exports = (config)->
 
   mist = Mistfile.fromFile mistfile
   resolver = mist.resolve mistdir
-  NinjaRenderer.run resolver, ['-t', 'clean'], ninjaProc
+  NinjaRenderer.run resolver, ['-t', 'clean'], ninjaProc,
+    config.runOpts, config.exitcb
