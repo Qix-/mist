@@ -21,7 +21,7 @@
   },
   "scripts": {
     "postinstall": "script/install-ninja.js",
-    "test": "mocha"
+    "test": "node_modules/.bin/mocha"
   },
   "keywords": [
     "build",
