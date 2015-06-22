@@ -20,7 +20,8 @@
     "url": "https://github.com/AERO-ff/mist/issues"
   },
   "scripts": {
-    "postinstall": "script/install-ninja.js"
+    "postinstall": "script/install-ninja.js",
+    "test": "mocha"
   },
   "keywords": [
     "build",

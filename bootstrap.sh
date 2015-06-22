@@ -31,6 +31,7 @@ if [ -z "$1" ] || [ "$1" == "mist" ]; then
 fi
 
 if [ -z "$1" ] || [ "$1" == "test" ]; then
+  npm test || exit 1
   [ ! -z "$1" ] && shift && [ -z "$1" ] && exit
 fi
 
