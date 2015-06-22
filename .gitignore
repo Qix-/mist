@@ -5,3 +5,4 @@
 /lib/
 .ninja_*
 npm-debug.log
+/coverage

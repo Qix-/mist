@@ -1,12 +1,15 @@
 verbose: true
 instrumentation:
-  extensions:
-    - .js
   excludes:
-    - node_modules/
-    - test/
+    - script/**/*
+    - node_modules/**/*
+    - lib/mist-parser.js
+    # Currently, the sourcemap compiler for lcov data doesn't know how to handle
+    # sources with no sourcemap. I'll have to write a patch for this at some
+    # point.
   include-all-sources: true
   include-pid: true
 reporting:
+  print: lcov
   reports:
     - lcov
