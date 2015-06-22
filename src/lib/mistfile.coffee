@@ -17,6 +17,7 @@
 
 (require './utils').install()
 
+os = require 'os'
 fs = require 'fs'
 path = require 'path'
 MistResolver = require './mist-resolver'
@@ -45,7 +46,21 @@ module.exports = class Mistfile
   #   The name of the variable to get
   ###
   get: (name)->
-    @vars[name] || ''
+    switch name
+      when 'OS_PLATFORM' then os.platform()
+      when 'OS_TYPE' then os.type()
+      when 'OS_ENDIANNESS' then os.endianness()
+      when 'OS_HOSTNAME' then os.hostname()
+      when 'OS_ARCH' then os.arch()
+      when 'OS_RELEASE' then os.release()
+      when 'OS_UPTIME' then os.uptime()
+      when 'OS_LOADAVG' then os.loadavg()
+      when 'OS_TMPDIR' then os.tmpdir()
+      when 'OS_TOTALMEM' then os.totalmem()
+      when 'OS_FREEMEM' then os.freemem()
+      when 'OS_CPUS' then os.cpus()
+      when 'OS_EOL' then os.EOL
+      else @vars[name] || ''
 
   ###
   # Unsets a variable
