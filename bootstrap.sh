@@ -22,9 +22,9 @@ if [ -z "$1" ] || [ "$1" == "mist" ]; then
   cofc bin/tmp/lib src/lib/mist-resolver.coffee || exit 1
   cofc bin/tmp/lib src/lib/mistfile.coffee || exit 1
   cofc bin/tmp/lib src/lib/utils.coffee || exit 1
+  cofc bin/tmp/lib/parser src/lib/parser/mist-parser.coffee || exit 1
   cofc bin/tmp/lib/renderer src/lib/renderer/ninja.coffee || exit 1
-  node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/lib/parser/mist-parser.pegcs bin/tmp/lib/parser/mist-parser.js || exit 1
-  node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/lib/parser/mist-preprocessor.pegcs bin/tmp/lib/parser/mist-preprocessor.js || exit 1
+  node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/lib/parser/mist-post-parser.pegcs bin/tmp/lib/parser/mist-post-parser.js || exit 1
   echo -en "\x1b[0m"
   NINJA=`pwd`/bin/ninja/ninja node bin/tmp/bin/mist.js || exit 1
   rm -rf bin/tmp

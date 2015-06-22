@@ -10,6 +10,7 @@ stdcoffee = $(coffee) -cbm --no-header -o "%O" "%f"
 # lib files
 # TODO: When issue #8 is finished, this can be condensed into a single rule
 : foreach src/lib/*.coffee |> $(stdcoffee) |> lib/%B.js
+: foreach src/lib/parser/*.coffee |> $(stdcoffee) |> lib/parser/%B.js
 : foreach src/lib/renderer/*.coffee |> $(stdcoffee) |> lib/renderer/%B.js
 
 # parsers

@@ -21,7 +21,7 @@ os = require 'os'
 fs = require 'fs'
 path = require 'path'
 MistResolver = require './mist-resolver'
-MistParser = require './parser/mist-preprocessor'
+MistParser = require './parser/mist-parser'
 
 module.exports = class Mistfile
   constructor: (@vars = {})->
@@ -175,5 +175,5 @@ Mistfile.fromFile = (filename, vars = {})->
 Mistfile.fromString = (str, vars = {})->
   options =
     mist: new Mistfile vars
-  MistParser.parse str.toString(), options
+  MistParser str.toString(), options
   return options.mist
