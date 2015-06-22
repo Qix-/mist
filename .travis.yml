@@ -1,2 +1,5 @@
 script: ./bootstrap.sh
-after_script: bin/mist.run.js
+node_js:
+    - "0.10"
+    - "0.11"
+    - "0.12"
