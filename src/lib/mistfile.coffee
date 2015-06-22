@@ -46,20 +46,21 @@ module.exports = class Mistfile
   #   The name of the variable to get
   ###
   get: (name)->
-    switch name
-      when 'OS_PLATFORM' then os.platform()
-      when 'OS_TYPE' then os.type()
-      when 'OS_ENDIANNESS' then os.endianness()
-      when 'OS_HOSTNAME' then os.hostname()
-      when 'OS_ARCH' then os.arch()
-      when 'OS_RELEASE' then os.release()
-      when 'OS_UPTIME' then os.uptime()
-      when 'OS_LOADAVG' then os.loadavg()
-      when 'OS_TMPDIR' then os.tmpdir()
-      when 'OS_TOTALMEM' then os.totalmem()
-      when 'OS_FREEMEM' then os.freemem()
-      when 'OS_CPUS' then os.cpus()
-      when 'OS_EOL' then os.EOL
+    switch
+      when name is 'OS_PLATFORM' then os.platform()
+      when name is 'OS_TYPE' then os.type()
+      when name is 'OS_ENDIANNESS' then os.endianness()
+      when name is 'OS_HOSTNAME' then os.hostname()
+      when name is 'OS_ARCH' then os.arch()
+      when name is 'OS_RELEASE' then os.release()
+      when name is 'OS_UPTIME' then os.uptime()
+      when name is 'OS_LOADAVG' then os.loadavg()
+      when name is 'OS_TMPDIR' then os.tmpdir()
+      when name is 'OS_TOTALMEM' then os.totalmem()
+      when name is 'OS_FREEMEM' then os.freemem()
+      when name is 'OS_CPUS' then os.cpus()
+      when name is 'OS_EOL' then os.EOL
+      when (m = name.match /^ENV_(.+)/) then process.env[m[1]] || ''
       else @vars[name] || ''
 
   ###
