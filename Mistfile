@@ -2,7 +2,7 @@ copy = cp "%f" "%o"
 coffee = node_modules/coffee-script/bin/coffee
 pegcs = node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin
 stdcoffee = $(coffee) -cbm --no-header -o "%O" "%f"
-: src/mist.coffee |> echo $(ENV_TERM) |> skdfjs
+
 # bin files
 : foreach src/mist.coffee |> $(stdcoffee) && node script/mkrun.js "%o" && chmod 0755 "%o" |> bin/%B.js
 : foreach src/mist?*.coffee |> $(stdcoffee) |> bin/%B.js
