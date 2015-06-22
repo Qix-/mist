@@ -13,8 +13,6 @@
 
 {
   @mist = options.mist
-  @enableStack = [yes]
-  @isEnabled = -> @enableStack[@enableStack.length - 1]
 }
 
 mistfile
@@ -22,52 +20,8 @@ mistfile
   ;
 
 statement
-  = (s:statement_rule ____ {s})
-  / statement_block
+  = statement_rule
   / statement_vardecl
-  ;
-
-statement_block
-  = block_endif
-  / block_if
-  ;
-
-block_if
-  = op:block_if_operator '(' vals:conditional_value_list ')'
-    {
-      console.error "\x1b[31m", vals, "\x1b[0m"
-      op.apply null, vals
-    }
-  ;
-
-block_endif
-  = 'endif'
-    {@enableStack.pop()}
-  ;
-
-conditional_value_list
-  = first:conditional_value other:(',' v:conditional_value {v})*
-    {[first].concat other||[]}
-  ;
-
-conditional_value
-  = variable_ref
-  / $comma_char+
-  ;
-
-comma_char
-  = comma_escape
-  / [^,\)]
-  ;
-
-comma_escape
-  = '\\\\' {'\\'}
-  / '\\,' {','}
-  / '\\)' {')'}
-  ;
-
-block_if_operator
-  = 'ifeq' {(a,b)=>@enableStack.push yes if a is b}
   ;
 
 statement_rule
@@ -178,16 +132,12 @@ _ ""
 
 __ ""
   = ___
-  / ____
+  / [\r\n]
+  / comment
   ;
 
 ___ ""
   = [ \t]
-  ;
-
-____
-  = [\r\n]
-  / comment
   ;
 
 comment ""
