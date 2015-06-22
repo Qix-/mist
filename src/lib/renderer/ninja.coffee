@@ -39,7 +39,6 @@ module.exports.render = (resolver)->
     out.push [
       'build'
       target.outputs
-      if target.auxOutputs.length then '|' else ''
       target.auxOutputs
       ':'
       target.command.name
