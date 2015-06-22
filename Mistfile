@@ -12,5 +12,5 @@ stdcoffee = $(coffee) -cbm --no-header -o "%O" "%f"
 : foreach src/lib/*.coffee |> $(stdcoffee) |> lib/%B.js
 : foreach src/lib/renderer/*.coffee |> $(stdcoffee) |> lib/renderer/%B.js
 
-# parser
-: foreach src/lib/*.pegcs |> $(pegcs) -o speed "%f" "%o" |> lib/%B.js
+# parsers
+: foreach src/lib/parser/*.pegcs |> $(pegcs) -o speed "%f" "%o" |> lib/parser/%B.js

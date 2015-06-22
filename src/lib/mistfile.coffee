@@ -21,7 +21,7 @@ os = require 'os'
 fs = require 'fs'
 path = require 'path'
 MistResolver = require './mist-resolver'
-MistParser = require './mist-parser'
+MistParser = require './parser/mist-parser'
 
 module.exports = class Mistfile
   constructor: (@vars = {})->
