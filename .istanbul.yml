@@ -1,0 +1,12 @@
+verbose: true
+instrumentation:
+  extensions:
+    - .js
+  excludes:
+    - node_modules/
+    - test/
+  include-all-sources: true
+  include-pid: true
+reporting:
+  reports:
+    - lcov
