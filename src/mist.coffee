@@ -15,24 +15,30 @@ path = require 'path'
 config = require 'commander'
 packageJson = require '../package'
 
+# action wrapper
+# we wrap action functions due to the fact the bootstrap process
+# only builds the bare-necessities. this function requires on demand,
+# not on every run.
+wrapAction = (name)->-> (require name).apply null, arguments
+
 # basic configuration
 config.cwd = process.cwd()
 
 config.version packageJson.version
 config.command 'build'
   .description 'build the project'
-  .action require './mist-build'
+  .action wrapAction './mist-build'
 config.command 'clean'
   .description 'clean the project of all outputs'
-  .action require './mist-clean'
+  .action wrapAction './mist-clean'
 config.command 'glob [globs...]'
   .description 'test file globbing patterns'
-  .action require './mist-glob'
+  .action wrapAction './mist-glob'
 config.command 'render'
   .description 'render Ninja configuration to a file'
   .option '--out <file>', 'the filename of the rendered configuration',
     'build.ninja'
-  .action require './mist-render'
+  .action wrapAction './mist-render'
 
 # default
 argv = process.argv
