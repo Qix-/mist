@@ -14,7 +14,7 @@ module.exports = (config)->
   Mistfile = require '../lib/mistfile'
   NinjaRenderer = require '../lib/renderer/ninja'
 
-  mistfile = Mistfile.find()
+  mistfile = Mistfile.find config.cwd
   if not mistfile
     throw 'Mistfile not found (reached filesystem boundary)'
   mistdir = path.dirname mistfile

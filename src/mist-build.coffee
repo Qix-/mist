@@ -15,7 +15,7 @@ module.exports = (config)->
 
   ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"
 
-  mistfile = Mistfile.find()
+  mistfile = Mistfile.find config.cwd
   if not mistfile
     throw 'Mistfile not found (reached filesystem boundary)'
   mistdir = path.dirname mistfile

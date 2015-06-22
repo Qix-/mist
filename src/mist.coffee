@@ -15,8 +15,10 @@ path = require 'path'
 config = require 'commander'
 packageJson = require '../package'
 
-Command = config.constructor
+# basic configuration
+config.cwd = process.cwd()
 
+config.version packageJson.version
 config.command 'build'
   .description 'build the project'
   .action require './mist-build'
