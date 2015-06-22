@@ -11,6 +11,12 @@
  *       Released under the MIT License
  */
 
+{
+  @MistParser = require './mist-parser'
+  @mist = options.mist
+}
+
 mistfile
-  =
+  = str:$.*
+    {@MistParser.parse str, mist: @mist}
   ;
