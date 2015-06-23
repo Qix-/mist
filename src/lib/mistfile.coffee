@@ -24,7 +24,7 @@ MistResolver = require './mist-resolver'
 MistParser = require './parser/mist-parser'
 
 module.exports = class Mistfile
-  constructor: (@vars = {})->
+  constructor: (@vars = Mistfile.defaultVars())->
     @rules = []
 
   ###
@@ -46,20 +46,8 @@ module.exports = class Mistfile
   #   The name of the variable to get
   ###
   get: (name)->
+    @vars[name] || ''
     switch
-      when name is 'OS_PLATFORM' then os.platform()
-      when name is 'OS_TYPE' then os.type()
-      when name is 'OS_ENDIANNESS' then os.endianness()
-      when name is 'OS_HOSTNAME' then os.hostname()
-      when name is 'OS_ARCH' then os.arch()
-      when name is 'OS_RELEASE' then os.release()
-      when name is 'OS_UPTIME' then os.uptime()
-      when name is 'OS_LOADAVG' then os.loadavg()
-      when name is 'OS_TMPDIR' then os.tmpdir()
-      when name is 'OS_TOTALMEM' then os.totalmem()
-      when name is 'OS_FREEMEM' then os.freemem()
-      when name is 'OS_CPUS' then os.cpus()
-      when name is 'OS_EOL' then os.EOL
       when (m = name.match /^ENV_(.+)/) then process.env[m[1]] || ''
       else @vars[name] || ''
 
@@ -136,6 +124,32 @@ module.exports = class Mistfile
     new resolver root, @
 
 ###
+# Returns the default variables for parsing
+#   (i.e. OS_ and ENV_ vars)
+###
+Mistfile.defaultVars = ->
+  # os vars
+  vars =
+    OS_PLATFORM: os.platform()
+    OS_TYPE: os.type()
+    OS_ENDIANNESS: os.endianness()
+    OS_HOSTNAME: os.hostname()
+    OS_ARCH: os.arch()
+    OS_RELEASE: os.release()
+    OS_UPTIME: os.uptime()
+    OS_LOADAVG: os.loadavg()
+    OS_TMPDIR: os.tmpdir()
+    OS_TOTALMEM: os.totalmem()
+    OS_FREEMEM: os.freemem()
+    OS_CPUS: os.cpus()
+    OS_EOL: os.EOL
+
+  # env vars
+  vars["ENV_#{k}"] = v for k, v of process.env
+
+  return vars
+
+###
 # Looks for a mist file in the given directory or its parents
 #
 # from:
@@ -161,7 +175,7 @@ Mistfile.find = (from = process.cwd())->
 # vars:
 #   Initial parse variables to use when parsing
 ###
-Mistfile.fromFile = (filename, vars = {})->
+Mistfile.fromFile = (filename, vars)->
   Mistfile.fromString fs.readFileSync(filename), vars
 
 ###
@@ -172,8 +186,10 @@ Mistfile.fromFile = (filename, vars = {})->
 # vars:
 #   Initial parse variables to use when parsing
 ###
-Mistfile.fromString = (str, vars = {})->
+Mistfile.fromString = (str, vars)->
+  mist = new Mistfile vars
   options =
-    mist: new Mistfile vars
+    mist: mist
+    vars: mist.vars
   MistParser str.toString(), options
   return options.mist
