@@ -30,6 +30,9 @@ RemoveLeadingSpace = (src)-> src.replace /^[\s\t]*/gm, ''
 ###
 ConditionalOperators =
   eq: (a, b)-> a is b
+  neq: (a,b)-> a isnt b
+  def: (a)-> a?
+  ndef: (a)-> not a?
 opreg = /^if(@@@@@@)\s*\(\s*((?:(?:'[^']*')|(?:"[^"]*")|(?:[^,\)]+))(?:,(?:(?:'[^']*')|(?:"[^"]*")|(?:[^,\)]+)))*)\s*\)\s*$/
 opreg = new RegExp opreg.source.replace '@@@@@@',
   Object.keys(ConditionalOperators).join '|'
@@ -42,7 +45,7 @@ ParseConditional = (line, vars)->
   arglist.replace /(?:(?:'([^']*)')|(?:"([^"]*)")|([^,\)]+))/g,
     (m, str, strd, env)->
       str = str || strd
-      if env then return args.push vars[env] || ''
+      if env then return args.push vars[env]
       if str then return args.push str
   return operator.apply null, args
 ConditionalProcessor = (src, vars = {})->
