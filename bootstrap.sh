@@ -9,7 +9,7 @@ fi
 if [ -z "$1" ] || [ "$1" == "mist" ]; then
   echo -en "\x1b[1;31m"
   function cofc {
-    node node_modules/coffee-script/bin/coffee -cbm --no-header -o $*
+    node node_modules/.bin/coffee -cbm --no-header -o $*
   }
   mkdir -p bin/tmp/bin
   mkdir -p bin/tmp/lib/parser
@@ -24,7 +24,7 @@ if [ -z "$1" ] || [ "$1" == "mist" ]; then
   cofc bin/tmp/lib src/lib/utils.coffee || exit 1
   cofc bin/tmp/lib/parser src/lib/parser/mist-parser.coffee || exit 1
   cofc bin/tmp/lib/renderer src/lib/renderer/ninja.coffee || exit 1
-  node node_modules/pegjs/bin/pegjs --plugin pegjs-coffee-plugin -o speed src/lib/parser/mist-post-parser.pegcs bin/tmp/lib/parser/mist-post-parser.js || exit 1
+  node node_modules/.bin/pegjs --plugin pegjs-coffee-plugin -o speed src/lib/parser/mist-post-parser.pegcs bin/tmp/lib/parser/mist-post-parser.js || exit 1
   echo -en "\x1b[0m"
   NINJA=`pwd`/bin/ninja/ninja node bin/tmp/bin/mist.js || exit 1
   rm -rf bin/tmp
