@@ -8,12 +8,21 @@
  #             MIST BUILD SYSTEM
  # Copyright (c) 2015 On Demand Solutions, inc.
 
+# for implementations using this:
+#   note the distinction between cases of `filename` and `fileName`:
+#   the former is for mistfile problems; the latter is generated automateically
+#   by the Error object to indicate the origin in the program.
+#
+#   Do not set `fileName`, but rather `filename`.
+#   I know it's confusing. Bite me.
+
 chalk = require 'chalk'
 fs = require 'fs'
+path = require 'path'
 
 col = [
   "\x1b[0G"
-  "\x1b[2G"
+  "\x1b[3G"
   "\x1b[13G"
   "\x1b[26G"
 ]
@@ -43,6 +52,7 @@ compileExpected = (expected)->
 compileFileMarker = (filename, line, column)->
   try
     compileSourceMarker fs.readFileSync(filename).toString(), line, column
+
 compileSourceMarker = (src, line, column)->
   lines = src.split /\r?\n/g
   line = lines[line-1]
@@ -59,6 +69,20 @@ compileSourceMarker = (src, line, column)->
     result.push "\x1b[#{c}#{d}#{chalk.red.bold('^')}"
 
   result.join "\n#{col[1]}"
+
+betterStack = (stack)->
+  lines = stack.split /\r?\n/g
+  lines = lines.slice 1 # get rid of the error
+  lines = lines.map (line)->
+    line.match /^\s*at\s+((?:(?!\s+\().)+)\s+\(([^:)]+)(:\d+:\d+)?\)$/
+  found = no
+  lines = lines.filter (line)->
+    if abs = path.isAbsolute line[2]
+      found = yes
+    abs || not found
+  lines = lines.map (line)->
+    "#{col[1]}in#{col[2]}#{line[1]} (#{line[2]}#{line[3]})"
+  lines.join '\n'
 
 module.exports = (e)->
   if e.constructor is String then e = message:e
@@ -80,10 +104,14 @@ module.exports = (e)->
       # peg error
       if e.expected then compileExpected e.expected
 
-    line null
+    line null,
       # line/col resolution
       if e.source and e.line then compileSourceMarker e.source, e.line, e.column
       else if e.filename and e.line then compileFileMarker e.filename, e.line,
         e.column
+
+    line null
+      # stack
+      if e.stack then chalk.dim.grey betterStack e.stack
 
   process.exit 10
