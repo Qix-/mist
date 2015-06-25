@@ -42,6 +42,7 @@
     "source-map-support": "git://github.com/Qix-/node-source-map-support#e8a586779845"
   },
   "dependencies": {
+    "chalk": "^1.0.0",
     "commander": "git://github.com/Qix-/commander.js#default-subcommand",
     "glob": "^5.0.10",
     "tmp": "0.0.26",
