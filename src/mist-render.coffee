@@ -21,8 +21,13 @@ module.exports = (config)->
 
   console.log 'mist: evaporating Mistfile:', mistfile
 
-  mist = Mistfile.fromFile mistfile
-  resolver = mist.resolve mistdir
-  rendered = NinjaRenderer.render resolver
-  fs.writeFileSync config.out, rendered
-  console.log 'mist: rendered to', config.out
+  try
+    mist = Mistfile.fromFile mistfile
+    resolver = mist.resolve mistdir
+    rendered = NinjaRenderer.render resolver
+    fs.writeFileSync config.out, rendered
+    console.log 'mist: rendered to', config.out
+  catch e
+    if e.constructor is String then e = message:e
+    e.filename = mistfile
+    throw e
