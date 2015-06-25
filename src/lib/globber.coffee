@@ -43,8 +43,3 @@ module.exports.performGlob = (pattern, mistdir)->
     nocomment: yes
 
   glob.sync pattern, globOpts
-
-module.exports.doAllGlobs = (globs, mistdir)->
-  (module.exports.performGlob pattern, mistdir for pattern in globs)
-    .flatten()
-    .unique()
