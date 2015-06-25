@@ -22,6 +22,7 @@ if [ -z "$1" ] || [ "$1" == "mist" ]; then
   cofc bin/tmp/lib src/lib/mist-resolver.coffee || exit 1
   cofc bin/tmp/lib src/lib/mistfile.coffee || exit 1
   cofc bin/tmp/lib src/lib/utils.coffee || exit 1
+  cofc bin/tmp/lib src/lib/pretty-error.coffee || exit 1
   cofc bin/tmp/lib/parser src/lib/parser/mist-parser.coffee || exit 1
   cofc bin/tmp/lib/renderer src/lib/renderer/ninja.coffee || exit 1
   node node_modules/.bin/pegjs --plugin pegjs-coffee-plugin -o speed src/lib/parser/mist-post-parser.pegcs bin/tmp/lib/parser/mist-post-parser.js || exit 1

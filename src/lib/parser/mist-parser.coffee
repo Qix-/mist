@@ -55,7 +55,7 @@ ConditionalProcessor = (src, vars = {})->
     .filter (line)->
       result = ParseConditional line, vars
       if result is null
-        if line.match(/^endif/) isnt null
+        if line.match(/^\s*endif\s*$/) isnt null
           enabled.pop()
           return false
         else

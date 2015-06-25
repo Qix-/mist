@@ -22,6 +22,11 @@ module.exports = (config)->
 
   console.log 'mist: evaporating Mistfile:', mistfile
 
-  mist = Mistfile.fromFile mistfile
-  resolver = mist.resolve mistdir
-  NinjaRenderer.run resolver, null, ninjaProc, config.runOpts, config.exitcb
+  try
+    mist = Mistfile.fromFile mistfile
+    resolver = mist.resolve mistdir
+    NinjaRenderer.run resolver, null, ninjaProc, config.runOpts, config.exitcb
+  catch e
+    if e.constructor is String then e = message:e
+    e.filename = mistfile
+    throw e
