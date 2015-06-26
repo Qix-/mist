@@ -34,7 +34,7 @@ line = (args...)->
 
 compileExpected = (expected)->
   first = yes
-  results = for e in expected.filter((i)->i.type isnt 'other')
+  results = for e in expected.filter((i)->i.type isnt 'other' or i.description?)
     l = [
       if first
         first = no
