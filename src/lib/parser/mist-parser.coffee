@@ -18,11 +18,12 @@ expand = (str, vars)->
   str.replace /\$\(\s*([a-z0-9_]+)\s*\)/gi, (m, name, offset)->
     if not vars[name]? then throw {
       message: "variable not defined: #{name}"
-      column: offset + 1
+      column: offset + 3 # +1 for 1-based offset, +2 for $(
     }
     return vars[name]
 
 doVariableAssignment = (line, enabled, vars)->
+  
   return line
 
 filters = [
