@@ -35,9 +35,7 @@ module.exports = class Mistfile
   # val:
   #   The new value
   ###
-  set: (name, val)->
-    val = @expand val if val
-    @vars[name] = val
+  set: (name, val)-> # TODO to be expanded (see #34)
 
   ###
   # Gets a parse variable's value
@@ -45,11 +43,8 @@ module.exports = class Mistfile
   # name:
   #   The name of the variable to get
   ###
-  get: (name)->
-    @vars[name] || ''
-    switch
-      when (m = name.match /^ENV_(.+)/) then process.env[m[1]] || ''
-      else @vars[name] || ''
+  get: (name)-> # TODO to be expanded (see #34)
+    throw 'not ready yet'
 
   ###
   # Unsets a variable
@@ -57,18 +52,13 @@ module.exports = class Mistfile
   # name:
   #   The name of the variable to unset
   ###
-  unset: (name)->
-    delete @vars[name]
+  unset: (name)-> # TODO to be expanded (see #34)
 
   ###
   # Expands a string using the currently configured parse variables
   ###
-  expand: (str)->
-    if typeof str is 'string'
-      return str.replace /(?:(?!\$).)\$\(\s*?([a-z0-9_]+)\s*\)/gi, (m, name)=>
-        @expand @get name
-    else if str.type? and str.value?
-      return type: str.type, value: @expand str.value
+  expand: (str)-> # TODO to be expanded (see #34)
+    str
 
   ###
   # Adds a rule given inputs and outputs and a command
