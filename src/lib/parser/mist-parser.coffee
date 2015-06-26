@@ -15,15 +15,23 @@ chalk = require 'chalk' # XXX DEBUG
 inspect = (v)->console.log require('util').inspect v, colors: on, depth: null
 
 expand = (str, vars)->
-  str.replace /\$\(\s*([a-z0-9_]+)\s*\)/gi, (m, name, offset)->
-    if not vars[name]? then throw {
-      message: "variable not defined: #{name}"
-      column: offset + 3 # +1 for 1-based offset, +2 for $(
-    }
-    return vars[name]
+  perform = ->
+    str = str.replace /\$\(\s*([a-z0-9_]+)\s*\)/gi, (m, name, offset)->
+      if not vars[name]? then throw {
+        message: "variable not defined: #{name}"
+        column: offset + 3 # +1 for 1-based offset, +2 for $(
+      }
+      return vars[name]
+  loop
+    break if str is perform()
+  return str
 
 doVariableAssignment = (line, enabled, vars)->
-  
+  m = line.match /^[\s\t]*([a-z0-9_]+)[\s\t]*(\+?=)[\s\t]*(.+?)[\s\t]*$/i
+  if m
+    switch m[2]
+      when '=' then vars[m[1]] = m[3]
+      when '+=' then vars[m[1]] = "#{vars[m[1]]} #{m[3]}"
   return line
 
 filters = [
