@@ -24,7 +24,7 @@ col = [
   "\x1b[0G"
   "\x1b[3G"
   "\x1b[13G"
-  "\x1b[26G"
+  "\x1b[35G"
 ]
 
 paragraph = (lines...)-> lines.filter((a)->a?).join '\n'
@@ -84,7 +84,7 @@ betterStack = (stack)->
 module.exports = (e)->
   if e.constructor is String then e = message:e
   if e.line? and e.map?
-    e.line = e.map[e.line]
+    e.line = e.map[e.line - 1]
 
   console.error paragraph null,
     line '\n',
