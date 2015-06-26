@@ -25,13 +25,57 @@ line
   ;
 
 statement
-  = statement_vardecl
+  = statement_rule
+  / statement_vardecl
   ;
 
-statement_vardecl
+statement_rule
+  = ':'
+    foreach:(_? o:rule_foreach {o})?
+    inputs:(_? o:rule_inputs {o})?
+    _ws? _nl
+  ;
+
+rule_foreach "foreach"
+  = 'foreach'
+  ;
+
+rule_inputs "input list"
+  = first:(glob / group_reference)
+    rest:(_ws glob / group_reference)*
+    {[first].concat rest || []}
+  ;
+
+statement_vardecl "variable declaration"
   = name:identifier
     _ws? '='
     _ws? value:(any_string / $[^\r\n]+)
+  ;
+
+glob "glob pattern"
+  = $(glob_leaf? ('/' glob_leaf)*)
+  ;
+
+glob_leaf
+  = (glob_matcher / glob_class / '*' / [a-z0-9-.?_]i)+
+  ;
+
+glob_matcher
+  = [!?+*@] '(' glob_leaf ('|' glob_leaf)* ')'
+  ;
+
+glob_class
+  = '[' (glob_class_escape_character / [^\]])* ']'
+  ;
+
+glob_class_escape_character
+  = '\\\\'
+  / '\\]'
+  ;
+
+group_reference "group reference"
+  = '!' name:identifier
+    {type: 'group', value: name}
   ;
 
 identifier "identifier"
