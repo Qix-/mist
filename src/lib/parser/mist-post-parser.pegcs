@@ -16,12 +16,12 @@
 }
 
 mistfile
-  = _? (_ws? line)* _?
+  = ((_ws / _nl)+)? (_ws? line (_nl / !.))*
   ;
 
 line
   = comment
-  / statement _? comment?
+  / statement _ws? comment?
   ;
 
 statement
@@ -31,9 +31,25 @@ statement
 
 statement_rule
   = ':'
-    foreach:(_? o:rule_foreach {o})?
-    inputs:(_? o:rule_inputs {o})?
-    _ws? _nl
+    foreach:(_ws? o:rule_foreach {o})?
+    inputs:(_ws? o:rule_inputs {o})?
+    dependencies:(_ws? o:rule_dependencies {o})?
+    orderDependencies:(_ws? o:rule_order_dependencies {o})?
+    command:(_ws? o:rule_command {o})
+    outputs:(_ws? o:rule_outputs {o})?
+    auxOutputs:(_ws? o:rule_aux_outputs {o})?
+    groups:(_ws? o:rule_groups {o})?
+    {
+      @mist.addRule
+        foreach: foreach
+        inputs: inputs
+        dependencies: dependencies
+        orderDependencies: orderDependencies
+        command: command
+        outputs: outputs
+        auxOutputs: auxOutputs
+        groups: groups
+    }
   ;
 
 rule_foreach "foreach"
@@ -42,7 +58,48 @@ rule_foreach "foreach"
 
 rule_inputs "input list"
   = first:(glob / group_reference)
-    rest:(_ws glob / group_reference)*
+    rest:(_ws d:(glob / group_reference) {d})*
+    {[first].concat rest || []}
+  ;
+
+rule_dependencies "dependencies"
+  = !('||'/'|>') '|' _ws? list:rule_dependency_list
+    {list}
+  ;
+
+rule_order_dependencies "order dependencies"
+  = '||' _ws? list:rule_dependency_list
+    {list}
+  ;
+
+rule_command "command"
+  = '|>' _ws? command:$((!'|>').)+ _ws? '|>'
+    {command.trim()}
+  ;
+
+rule_outputs "outputs"
+  = rule_output_list
+  ;
+
+rule_aux_outputs "aux outputs"
+  = '|' _ws? list:rule_output_list
+    {list}
+  ;
+
+rule_groups "groups"
+  = '->' _ws? first:identifier rest:(_ws i:identifier {i})*
+    {[first].concat rest}
+  ;
+
+rule_output_list
+  = first:delimited_path
+    rest:(_ws d:delimited_path {d})*
+    {[first].concat rest || []}
+  ;
+
+rule_dependency_list
+  = first:(glob / group_reference / delimited_path)
+    rest:(_ws d:(glob / group_reference / delimited_path) {d})*
     {[first].concat rest || []}
   ;
 
@@ -50,14 +107,25 @@ statement_vardecl "variable declaration"
   = name:identifier
     _ws? '='
     _ws? value:(any_string / $[^\r\n]+)
+    {@mist.set name, value}
+  ;
+
+delimited_path
+  = path:$('/'? delimited_path_leaf)+
+    {type: 'simple', value: path}
+  ;
+
+delimited_path_leaf
+  = (!'->' file_character / '%')+
   ;
 
 glob "glob pattern"
-  = $(glob_leaf? ('/' glob_leaf)*)
+  = glob:$('/'? glob_leaf)+
+    {type: 'glob', value: glob}
   ;
 
 glob_leaf
-  = (glob_matcher / glob_class / '*' / [a-z0-9-.?_]i)+
+  = (glob_matcher / glob_class / '*' / file_character / '?')+
   ;
 
 glob_matcher
@@ -76,6 +144,10 @@ glob_class_escape_character
 group_reference "group reference"
   = '!' name:identifier
     {type: 'group', value: name}
+  ;
+
+file_character
+  = [a-z0-9-._]i
   ;
 
 identifier "identifier"
@@ -118,17 +190,13 @@ escape_character
   ;
 
 comment "comment"
-  = '#' [^\r\n]* _nl
-  ;
-
-_
-  = (_ws / _nl)+
+  = '#' (!_nl .)*
   ;
 
 _ws "whitespace"
-  = ([ \t] / !.)+
+  = [ \t]+
   ;
 
 _nl "EOL"
-  = ([\r\n] / !.)+
+  = [\r\n]+
   ;

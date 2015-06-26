@@ -9,11 +9,7 @@
  # Copyright (c) 2015 On Demand Solutions, inc.
 
 MistPostParser = require './mist-post-parser'
-chalk = require 'chalk' # XXX DEBUG
 backslash = require 'backslash'
-
-## XXX DEBUG
-inspect = (v)->console.log require('util').inspect v, colors: on, depth: null
 
 expand = (str, vars)->
   perform = ->
@@ -106,10 +102,7 @@ module.exports = (src, options = {})->
 
   lines = processLines lines, map, options
   src = lines.join '\n'
-  console.error chalk.magenta src
   map = map.filter (m)-> m?
-# console.log chalk.magenta src
-# process.exit 0
   try
     MistPostParser.parse src, options
   catch e
