@@ -41,7 +41,7 @@ conditionals =
     (return false if val not of args) for val, i in v
     return true
   ifndef: (args, v...)-> !(conditionals.ifdef.apply null, v)
-conditionalsReg = /^[\s\t]*(@@@@)[\s\t]*\(([^\)\\]+(?:\\.[^\)\\]*)*)\)[\s\t]*$/
+conditionalsReg = /^[\s\t]*(@@@@)[\s\t]*\(([^\)\\]+(?:\\.[^\)\\]*)*)\)[\s\t]*(?:\#.*)$/
 conditionalsReg = new RegExp conditionalsReg.source.replace '@@@@',
   (k for k,v of conditionals).join '|'
 
@@ -62,11 +62,11 @@ doConditional = (line, enabled, vars)->
       enabled.push cmp.apply null, [vars].concat args
     return null
 
-  if /^\s*endif\s*$/.test line
+  if /^\s*endif\s*(?:\#.*)$/.test line
     enabled.pop()
     return null
 
-  if /^\s*else\s*$/.test line
+  if /^\s*else\s*(?:\#.*)$/.test line
     enabled[enabled.length - 1] = !enabled[enabled.length - 1]
     return null
   return line
