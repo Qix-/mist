@@ -88,7 +88,7 @@ module.exports = (e)->
     e.line = e.map[e.line - 1]
 
   console.error paragraph null,
-    line '\n',
+    line null,
       chalk.red.bold('ERROR: '),
       e.message || 'unexpected error'
 
