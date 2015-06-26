@@ -68,14 +68,17 @@ betterStack = (stack)->
   lines = stack.split /\r?\n/g
   lines = lines.slice 1 # get rid of the error
   lines = lines.map (line)->
-    line.match /^\s*at\s+((?:(?!\s+\().)+)\s+\(([^:)]+)(:\d+:\d+)?\)$/
+    m = line.match /^\s*at\s+(?:(?:([^\s]+)\s*\(([^:]+)(:\d+:\d+)?\))|(?:([^:]+)(:\d+:\d+)))$/
   found = no
   lines = lines.filter (line)->
-    if abs = path.isAbsolute line[2]
+    if abs = path.isAbsolute line[2] || line[4]
       found = yes
     abs || not found
   lines = lines.map (line)->
-    "#{col[1]}in#{col[2]}#{line[1]} (#{line[2]}#{line[3]})"
+    if line[1]
+      "#{col[1]}in#{col[2]}#{line[1]} (#{line[2]}#{line[3]||''})"
+    else
+      "#{col[1]}in#{col[2]}#{line[4]}#{line[5]||''}"
   lines.join '\n'
 
 module.exports = (e)->
