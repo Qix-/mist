@@ -57,7 +57,12 @@ doConditional = (line, enabled, vars)->
       args = m[2]
         .split /(?:\\\\)*\\,/g
         .map Function.prototype.call.bind String.prototype.trim
-        .map backslash
+        .map (arg)->
+          try
+            backslash arg
+          catch e
+            delete e.column # no real way to get offsets here.
+            throw e
       enabled.push cmp.apply null, [vars].concat args
     return null
 
