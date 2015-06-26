@@ -34,7 +34,7 @@ doVariableAssignment = (line, enabled, vars)->
 
 conditionals =
   ifeq: (args, v...)->
-    (return false if val isnt v[0]) for val, i in val when i > 1
+    (return false if val isnt v[0]) for val, i in v when i > 1
     return true
   ifneq: (args, v...)-> !(conditionals.ifeq.apply null, v)
   ifdef: (args, v...)->
