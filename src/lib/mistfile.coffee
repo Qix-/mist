@@ -36,7 +36,7 @@ module.exports = class Mistfile
   #   The new value
   ###
   set: (name, val)->
-    val = @expand val
+    val = @expand val if val
     @vars[name] = val
 
   ###

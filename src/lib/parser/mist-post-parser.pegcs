@@ -106,7 +106,7 @@ rule_dependency_list
 statement_vardecl "variable declaration"
   = name:identifier
     _ws? '='
-    _ws? value:(any_string / $[^\r\n]+)
+    _ws? value:(any_string / $[^\r\n]+)?
     {@mist.set name, value}
   ;
 
