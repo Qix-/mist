@@ -60,8 +60,7 @@ compileSourceMarker = (src, line, column)->
 
   result = ['\n', line]
   if column
-    c = column - 1
-    result.push "\x1b[1D\x1b[#{c}C#{chalk.red.bold('^')}"
+    result.push "\x1b[1D\x1b[#{column}C#{chalk.red.bold('^')}"
 
   result.join "\n#{col[1]}"
 
