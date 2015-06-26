@@ -16,131 +16,28 @@
 }
 
 mistfile
-  = _? (statement _?)*
+  = __? (_? statement _?)* __?
   ;
 
 statement
-  = statement_rule
-  / statement_vardecl
-  ;
+  = 
 
-statement_rule
-  = ':'
-    foreach:(_? "foreach")?
-    main_inputs:(_? i:input_list {i})?
-    dep_inputs:(_? '|' _? i:input_list {i})?
-    order_inputs:(_? '||' _? i:input_list {i})?
-    command:(_? cmd:rule_command {cmd})
-    main_outputs:(_? i:delim_path_list {i})?
-    aux_outputs:(_? '|' _? i:delim_path_list {i})?
-    groups:(_? '->' gs:(_? g:group_name {g})* {gs})?
-    ___* _
-    {
-      @mist.addRule
-        foreach: foreach
-        inputs: main_inputs
-        dependencies: dep_inputs
-        orderDependencies: order_inputs
-        command: command
-        outputs: main_outputs
-        auxOutputs: aux_outputs
-        groups: groups
-    }
-  ;
-
-rule_command
-  = '|>' _? cmd:((!(_? '|>')) c:substitute_itr {c})+ _? '|>'
-    {cmd.join ''}
-  ;
-
-delim_path_list
-  = first:delim_path others:(_ d:delim_path {d})*
-    {[first].concat (others || [])}
-  ;
-
-delim_path
-  = path:((!'->') p:delim_path_ {p})
-    {type: 'simple', value: path}
-  ;
-
-delim_path_
-  = c:delim_path_char+
-    {c.join ''}
-  ;
-
-delim_path_char
-  = variable_ref
-  / [a-z0-9\/\.\-\_\~\%]i
-  ;
-
-input_list
-  = first:input others:(_ i:input {i})* _
-    {[first].concat (others || [])}
-  ;
-
-input
-  = group_ref
-  / glob
-  ;
-
-group_ref
-  = '!' name:group_name
-    {type: 'group', value: name}
-  ;
-
-group_name
-  = $([a-z_\-]i [a-z0-9_\-]i*)
-  ;
-
-glob
-  = cf:glob_char co:(glob_char/'|')*
-    {type: 'glob', value: ([cf].concat co).join ''}
-  ;
-
-glob_char
-  = variable_ref
-  / [a-z0-9\/\*\.\-\_\~\{\}\(\)\@\?\[\]\!]i
-  ;
-
-statement_vardecl
-  = name:variable_name _? '=' _? val:substitute_string
-    {@mist.set name, val}
-  ;
-
-substitute_string
-  = str:substitute_itr+
-    {str.join ''}
-  ;
-
-substitute_itr
-  = variable_ref
-  / [^\r\n]
-  ;
-
-variable_ref
-  = '$(' _? name:variable_name _? ')'
-    {@mist.get name}
-  ;
-
-variable_name
-  = $([a-z0-9_]i+)
+__ ""
+  = ([\s\t] / CRLF)+
   ;
 
 _ ""
-  = __+
+  = [\s\t]+
   ;
 
-__ ""
-  = ___
-  / [\r\n]
-  / comment
+CRLF ""
+  = CR? LF
   ;
 
-___ ""
-  = [ \t]
+CR ""
+  = '\r'
   ;
 
-comment ""
-  = !'\\' '#' [^\r\n]*
+LF ""
+  = '\n'
   ;
-

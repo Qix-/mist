@@ -9,67 +9,58 @@
  # Copyright (c) 2015 On Demand Solutions, inc.
 
 MistPostParser = require './mist-post-parser'
+chalk = require 'chalk' # XXX DEBUG
 
-###
-# Removes all comments from the file
-###
-RemoveComments = (src)-> src.replace /((?!\\).|^)#.*$/gm, '$1'
+## XXX DEBUG
+inspect = (v)->console.log require('util').inspect v, colors: on, depth: null
 
-###
-# Removes all double newlines
-###
-RemoveDoubleNL = (src)-> src.replace /(\r?\n){2,}/g, '$1'
+expand = (str, vars)->
+  str.replace /\$\(\s*([a-z0-9_]+)\s*\)/gi, (m, name, offset)->
+    if not vars[name]? then throw {
+      message: "variable not defined: #{name}"
+      column: offset + 1
+    }
+    return vars[name]
 
-###
-# Removes leading spaces
-###
-RemoveLeadingSpace = (src)-> src.replace /^[\s\t]*/gm, ''
+doVariableAssignment = (line, enabled, vars)->
+  return line
 
-###
-# Conditional Processor
-###
-ConditionalOperators =
-  eq: (a, b)-> a is b
-  neq: (a,b)-> a isnt b
-  def: (a)-> a?
-  ndef: (a)-> not a?
-opreg = /^if(@@@@@@)\s*\(\s*((?:(?:'[^']*')|(?:"[^"]*")|(?:[^,\)]+))(?:,(?:(?:'[^']*')|(?:"[^"]*")|(?:[^,\)]+)))*)\s*\)\s*$/
-opreg = new RegExp opreg.source.replace '@@@@@@',
-  Object.keys(ConditionalOperators).join '|'
-ParseConditional = (line, vars)->
-  arglist = line.match opreg
-  if not arglist then return null
-  operator = ConditionalOperators[arglist[1]]
-  arglist = arglist[2]
-  args = []
-  arglist.replace /(?:(?:'([^']*)')|(?:"([^"]*)")|([^,\)]+))/g,
-    (m, str, strd, env)->
-      str = str || strd
-      if env then return args.push vars[env]
-      if str then return args.push str
-  return operator.apply null, args
-ConditionalProcessor = (src, vars = {})->
+filters = [
+  doVariableAssignment
+]
+
+processLines = (lines, map, options)->
   enabled = [yes]
-  src
-    .split /[\r\n]+/g
-    .filter (line)->
-      result = ParseConditional line, vars
-      if result is null
-        if line.match(/^\s*endif\s*$/) isnt null
-          enabled.pop()
-          return false
-        else
-          return enabled[enabled.length-1]
-      else
-        enabled.push result
-        return false
-    .join '\n'
+  enabled.isEnabled = -> @[@.length - 1]
+  vars = options.vars || options.vars = {}
+  lines = lines.map (line, i)->
+    try
+      line = expand line, vars
+    catch e
+      e.line = i
+      throw e
+    for filter in filters
+      line = filter line, enabled, vars, options
+      if not line then return null
+    return line
+  lines = lines.filter (line, i)->
+    if line is null
+      map[i] = null
+    return line?
+  return lines
 
-module.exports = (src, opts)->
-  [
-    RemoveComments
-    RemoveDoubleNL
-    RemoveLeadingSpace
-    (src)-> ConditionalProcessor src, opts.vars
-    (src)-> MistPostParser.parse src, opts
-  ].reduce ((src, fn)-> fn src), src
+module.exports = (src, options = {})->
+  lines = src.split /\r?\n/g
+  map = [1..lines.length]
+
+  try
+    lines = processLines lines, map, options
+    src = lines.join '\n'
+    map = map.filter (m)-> m?
+    console.log chalk.magenta src
+    process.exit 0
+#    MistPostParser.parse src, options
+  catch e
+    if e.constructor is String then e = message:e
+    e.map = map
+    throw e
