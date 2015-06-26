@@ -14,10 +14,6 @@ backslash = require 'backslash'
 expand = (str, vars)->
   perform = ->
     str = str.replace /\$\(\s*([a-z0-9_]+)\s*\)/gi, (m, name, offset)->
-      if name not of vars then throw {
-        message: "variable not defined: #{name}"
-        column: offset + 3 # +1 for 1-based offset, +2 for $(
-      }
       return vars[name] || ''
   loop
     break if str is perform()
@@ -29,7 +25,7 @@ doVariableAssignment = (line, enabled, vars)->
     return null if not enabled.isEnabled()
     switch m[2]
       when '=' then vars[m[1]] = m[3]
-      when '+=' then vars[m[1]] = "#{vars[m[1]]} #{m[3]}"
+      when '+=' then vars[m[1]] = "#{vars[m[1]] || ''} #{m[3]}"
   return line
 
 conditionals =
