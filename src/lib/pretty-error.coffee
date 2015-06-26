@@ -84,6 +84,7 @@ betterStack = (stack)->
 module.exports = (e)->
   if e.constructor is String then e = message:e
   if e.line? and e.map?
+    e.sourceLine = e.line
     e.line = e.map[e.line - 1]
 
   console.error paragraph null,
@@ -103,7 +104,8 @@ module.exports = (e)->
 
     line null,
       # line/col resolution
-      if e.source and e.line then compileSourceMarker e.source, e.line, e.column
+      if e.source and e.line then compileSourceMarker e.source,
+        (if e.sourced then e.sourceLine else e.line), e.column
       else if e.filename and e.line then compileFileMarker e.filename, e.line,
         e.column
 

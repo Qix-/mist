@@ -99,14 +99,17 @@ module.exports = (src, options = {})->
   lines = src.split /\r?\n/g
   map = [1..lines.length]
 
+  lines = processLines lines, map, options
+  src = lines.join '\n'
+  console.error chalk.magenta src
+  map = map.filter (m)-> m?
+# console.log chalk.magenta src
+# process.exit 0
   try
-    lines = processLines lines, map, options
-    src = lines.join '\n'
-    map = map.filter (m)-> m?
-#   console.log chalk.magenta src
-#   process.exit 0
     MistPostParser.parse src, options
   catch e
     if e.constructor is String then e = message:e
     e.map = map
+    e.source = src
+    e.sourced = yes
     throw e
