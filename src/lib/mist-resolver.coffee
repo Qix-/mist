@@ -194,7 +194,7 @@ module.exports = class MistResolver
 ###
 # Make sure to always include `$1` in the replacement
 ###
-MistResolver.delimiterPattern = /((?!\%).)?%([fbBoO])/g
+MistResolver.delimiterPattern = /%(-?\d+-?(?:,-?\d+-?)*(?=d))?([%fFbBoOd])/g
 
 ###
 # Returns whether or not a string has filename delimiters present
@@ -217,7 +217,8 @@ MistResolver.delimitPath = (pathname, template)->
   dict = MistResolver.generateDict pathname
 
   template.replace MistResolver.delimiterPattern, (m, p, c)->
-    if c of dict then (p || '') + dict[c]
+    c = (p || '') + c
+    if c of dict then dict[c]
     else throw "unknown file delimiter: #{c}"
 
 ###
@@ -233,11 +234,26 @@ MistResolver.generateDict = (pathname)->
   if pathname of @
     dict = @[pathname]
   else
+    dict['%'] = '%'
+    dict['x'] = path.extname pathname
+    dict['b'] = path.basename pathname
+    dict['X'] = dict['b'].replace /.+?(\..+)$/, '$1'
+    dict['B'] = path.basename dict['b'], dict['x']
     dict['f'] = pathname
+    dict['F'] = path.basename dict['f'], dict['x']
     dict['o'] = '%o'
     dict['O'] = '%O'
-    dict['b'] = path.basename pathname
-    dict['B'] = dict['b'].replace /\..+$/, ''
+
+    leafs = path.dirname(pathname).split path.sep
+    len = leafs.length
+    pathJoinArray = (arr)-> path.join.apply path, arr
+    for leaf,i in leafs
+      ii = i + 1
+      ni = len - ii
+      dict["#{ii}d"] = leaf
+      dict["#{ii}-d"] = pathJoinArray leafs.slice i
+      dict["-#{ii}d"] = leafs[ni]
+      dict["-#{ii}-d"] = pathJoinArray leafs.slice ni
   return dict
 MistResolver.generateDict = MistResolver.generateDict.bind {}
 
@@ -248,14 +264,20 @@ MistResolver.generateDict = MistResolver.generateDict.bind {}
 #   The command to delimit
 ###
 MistResolver.delimitCommand = (command)->
-  command.replace MistResolver.delimiterPattern, "$1${D_$2}"
+  command.replace MistResolver.delimiterPattern, (m, c, d)->
+    if d is '%' then '%'
+    c = (c || '').replace '-', '_'
+    "${D_#{c}#{d}}"
 
 MistResolver.compileVars = (inputs, outputs)->
   result = {}
+  outputDirs = outputs.map path.dirname
   for input in inputs.map MistResolver.generateDict
     for k, v of input
+      if k is '%' then continue
       if k is 'o' then v = outputs
-      if k is 'O' then v = outputs.map path.dirname
+      if k is 'O' then v = outputDirs
+      k = k.replace '-', '_'
       k = "D_#{k}"
       result[k] = [] if k not of result
       result[k] = result[k].concat v
