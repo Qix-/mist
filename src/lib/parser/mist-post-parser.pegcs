@@ -98,8 +98,8 @@ rule_output_list
   ;
 
 rule_dependency_list
-  = first:(glob / group_reference / delimited_path)
-    rest:(_ws d:(glob / group_reference / delimited_path) {d})*
+  = first:(group_reference / delimited_path / glob)
+    rest:(_ws d:(group_reference / delimited_path / glob) {d})*
     {[first].concat rest || []}
   ;
 
