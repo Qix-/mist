@@ -1,6 +1,8 @@
 /src/
 /bin/ninja/
 /bin/tmp/
+/test/
+/Mistfile
 /node_modules/
 /bootstrap.sh
 *.map
