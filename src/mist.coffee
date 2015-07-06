@@ -8,7 +8,7 @@
  #             MIST BUILD SYSTEM
  # Copyright (c) 2015 On Demand Solutions, inc.
 
-prettyError = require '../lib/pretty-error'
+prettyError = require '../lib/util/pretty-error'
 path = require 'path'
 config = require 'commander'
 packageJson = require '../package'

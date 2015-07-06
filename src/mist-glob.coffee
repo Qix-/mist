@@ -7,11 +7,10 @@
  #
  #             MIST BUILD SYSTEM
  # Copyright (c) 2015 On Demand Solutions, inc.
+path = require 'path'
+Globber = require '../lib/util/globber'
 
 module.exports = (globs, config)->
-  path = require 'path'
-  Globber = require '../lib/globber'
-
   for pattern in globs
     results = Globber.performGlob pattern, process.cwd()
     console.log "\x1b[33m#{pattern}\x1b[0m"
