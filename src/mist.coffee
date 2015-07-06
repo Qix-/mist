@@ -1,12 +1,12 @@
- #
- #     _|      _|  _|              _|
- #     _|_|  _|_|        _|_|_|  _|_|_|_|
- #     _|  _|  _|  _|  _|_|        _|
- #     _|      _|  _|      _|_|    _|
- #     _|      _|  _|  _|_|_|        _|_|
- #
- #             MIST BUILD SYSTEM
- # Copyright (c) 2015 On Demand Solutions, inc.
+#
+#     _|      _|  _|              _|
+#     _|_|  _|_|        _|_|_|  _|_|_|_|
+#     _|  _|  _|  _|  _|_|        _|
+#     _|      _|  _|      _|_|    _|
+#     _|      _|  _|  _|_|_|        _|_|
+#
+#             MIST BUILD SYSTEM
+# Copyright (c) 2015 On Demand Solutions, inc.
 
 prettyError = require '../lib/util/pretty-error'
 path = require 'path'

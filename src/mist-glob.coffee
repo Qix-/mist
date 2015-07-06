@@ -1,12 +1,13 @@
- #
- #     _|      _|  _|              _|
- #     _|_|  _|_|        _|_|_|  _|_|_|_|
- #     _|  _|  _|  _|  _|_|        _|
- #     _|      _|  _|      _|_|    _|
- #     _|      _|  _|  _|_|_|        _|_|
- #
- #             MIST BUILD SYSTEM
- # Copyright (c) 2015 On Demand Solutions, inc.
+#
+#     _|      _|  _|              _|
+#     _|_|  _|_|        _|_|_|  _|_|_|_|
+#     _|  _|  _|  _|  _|_|        _|
+#     _|      _|  _|      _|_|    _|
+#     _|      _|  _|  _|_|_|        _|_|
+#
+#             MIST BUILD SYSTEM
+# Copyright (c) 2015 On Demand Solutions, inc.
+
 path = require 'path'
 Globber = require '../lib/util/globber'
 
