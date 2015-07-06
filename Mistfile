@@ -8,7 +8,6 @@ stdcoffee = $(coffee) -cbm --no-header -o "%O" "%f"
 : foreach src/mist?*.coffee |> $(stdcoffee) |> bin/%B.js
 
 # lib files
-# TODO: When issue #8 is finished, this can be condensed into a single rule
 : foreach src/lib/**/*.coffee |> $(stdcoffee) |> %2-d/%B.js
 
 # parsers
