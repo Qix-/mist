@@ -21,12 +21,12 @@
   },
   "keywords": [
     "build",
-    "system",
     "mist",
     "ninja",
-    "task",
     "runner",
-    "streams"
+    "streams",
+    "system",
+    "task"
   ],
   "preferGlobal": true,
   "devDependencies": {
@@ -47,6 +47,7 @@
     "chalk": "^1.0.0",
     "commander": "git://github.com/Qix-/commander.js#default-subcommand",
     "glob": "^5.0.10",
+    "legos": "^1.0.0",
     "tmp": "0.0.26",
     "xxhash": "^0.2.2"
   }
