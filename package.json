@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/AERO-ff/mist"
   },
-  "main": "lib/mistfile.js",
+  "main": "lib/mist.js",
   "bin": {
     "mist": "bin/mist.js"
   },
@@ -47,7 +47,7 @@
     "chalk": "^1.0.0",
     "commander": "git://github.com/Qix-/commander.js#default-subcommand",
     "glob": "^5.0.10",
-    "legos": "^1.0.0",
+    "legos": "^1.1.0",
     "tmp": "0.0.26",
     "xxhash": "^0.2.2"
   }
