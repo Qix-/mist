@@ -12,6 +12,7 @@ fs = require 'fs'
 readFd = require 'read-fd'
 findHigherFile = require 'find-higher-file'
 parseMist = require './parser/mist-parser'
+Tree = require './tree/tree'
 
 class Mist
   constructor: (@source, @filename, @opts = {})->
@@ -31,7 +32,7 @@ class Mist
 
     @process (err)->
       if err then return cb err
-      back.run @, cb
+      back.run @tree, cb
 
   process: (cb)->
     if @tree then return cb null, @tree
@@ -43,7 +44,9 @@ class Mist
     catch e
       cb e
 
-    console.log require('util').inspect structure, colors:on,depth:null
+    # create a tree
+    @tree = new Tree structure
+    #cb()
 
 Mist.find = (from = process.cwd(), opts, cb)->
   if arguments.length is 2
