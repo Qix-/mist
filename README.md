@@ -16,7 +16,7 @@ Usage:
   mist render [-C <cwd>] [-b <name>] [-s | -o <file>]
 
 Options:
-  build                  Build the project
+  build                  Build the project [default]
   render                 Render the build configuration to a file
   
   -C, --cwd <cwd>        Specify working directory
