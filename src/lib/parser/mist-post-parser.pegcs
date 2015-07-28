@@ -57,8 +57,8 @@ rule_foreach "foreach"
   ;
 
 rule_inputs "input list"
-  = first:(glob / group_reference)
-    rest:(_ws d:(glob / group_reference) {d})*
+  = first:(group_reference / (&not_glob p:delimited_path {p}) / glob)
+    rest:(_ws d:(group_reference / (&not_glob p:delimited_path {p}) / glob) {d})*
     {[first].concat rest || []}
   ;
 
@@ -98,8 +98,8 @@ rule_output_list
   ;
 
 rule_dependency_list
-  = first:(group_reference / delimited_path / glob)
-    rest:(_ws d:(group_reference / delimited_path / glob) {d})*
+  = first:(group_reference / (&not_glob p:delimited_path {p}) / glob)
+    rest:(_ws d:(group_reference / (&not_glob p:delimited_path {p}) / glob) {d})*
     {[first].concat rest || []}
   ;
 
@@ -114,6 +114,11 @@ statement_vardecl "variable declaration"
         value: value
       }
     }
+  ;
+
+/* use with `&not_glob` before using `delimited_path */
+not_glob
+  = delimited_path (_ws / '|')
   ;
 
 delimited_path
