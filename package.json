@@ -45,9 +45,12 @@
   "dependencies": {
     "backslash": "^0.1.7",
     "chalk": "^1.0.0",
-    "commander": "git://github.com/Qix-/commander.js#default-subcommand",
+    "docoptmd": "^0.1.0",
+    "find-higher-file": "^1.0.0",
     "glob": "^5.0.10",
     "legos": "^1.1.0",
+    "read-fd": "^0.1.0",
+    "stream-buffers": "^2.2.0",
     "tmp": "0.0.26",
     "xxhash": "^0.2.2"
   }
