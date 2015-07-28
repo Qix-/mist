@@ -45,6 +45,7 @@
   "dependencies": {
     "backslash": "^0.1.7",
     "chalk": "^1.0.0",
+    "docopt-cleanse": "^0.1.0",
     "docoptmd": "^0.1.0",
     "find-higher-file": "^1.0.0",
     "glob": "^5.0.10",
