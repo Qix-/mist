@@ -11,17 +11,15 @@
  *       Released under the MIT License
  */
 
-{
-  @mist = options.mist
-}
-
 mistfile
-  = ((_ws / _nl)+)? (_ws? line (_nl / !.))*
+  = ((_ws / _nl)+)? lines:(_ws? l:line (_nl / !.) {l})*
+    {lines.filter (l)-> !!l}
   ;
 
 line
   = comment
-  / statement _ws? comment?
+  / statement:statement _ws? comment?
+    {statement}
   ;
 
 statement
@@ -40,7 +38,8 @@ statement_rule
     auxOutputs:(_ws? o:rule_aux_outputs {o})?
     groups:(_ws? o:rule_groups {o})?
     {
-      @mist.addRule
+      {
+        type: 'rule'
         foreach: foreach
         inputs: inputs
         dependencies: dependencies
@@ -49,6 +48,7 @@ statement_rule
         outputs: outputs
         auxOutputs: auxOutputs
         groups: groups
+      }
     }
   ;
 
@@ -107,7 +107,13 @@ statement_vardecl "variable declaration"
   = name:identifier
     _ws? '+'? '='
     _ws? value:(any_string / $[^\r\n]+)?
-    {@mist.set name, value} /* to be expanded (ref #34) */
+    {
+      {
+        type: 'var'
+        name: name
+        value: value
+      }
+    }
   ;
 
 delimited_path
@@ -191,6 +197,7 @@ escape_character
 
 comment "comment"
   = '#' (!_nl .)*
+    {null}
   ;
 
 _ws "whitespace"

@@ -82,6 +82,7 @@ betterStack = (stack)->
   lines.join '\n'
 
 module.exports = (e)->
+  if not e then return
   if e.constructor is String then e = message:e
   if e.line? and e.map?
     e.sourceLine = e.line

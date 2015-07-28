@@ -100,7 +100,7 @@ module.exports = (src, options = {})->
   src = lines.join '\n'
   map = map.filter (m)-> m?
   try
-    MistPostParser.parse src, options
+    return MistPostParser.parse src, options
   catch e
     if e.constructor is String then e = message:e
     e.map = map

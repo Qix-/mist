@@ -10,7 +10,7 @@
 
 module.exports = (config)->
   path = require 'path'
-  Mistfile = require '../lib/mistfile'
+  Mistfile = require '../'
   NinjaRenderer = require '../lib/renderer/ninja'
 
   ninjaProc = process.env.NINJA || "#{__dirname}/ninja/ninja"

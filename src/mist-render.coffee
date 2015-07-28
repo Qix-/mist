@@ -11,7 +11,7 @@
 module.exports = (config)->
   fs = require 'fs'
   path = require 'path'
-  Mistfile = require '../lib/mistfile'
+  Mistfile = require '../'
   NinjaRenderer = require '../lib/renderer/ninja'
 
   mistfile = Mistfile.find config.cwd
