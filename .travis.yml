@@ -1,11 +1,13 @@
 language: node_js
-
 script:
-  - ./bootstrap.sh
-  - node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --reporter mocha-lcov-reporter
-  - node script/lcov-transform.js coverage/lcov.info `pwd`/ bin lib | node_modules/.bin/coveralls
+- ./bootstrap.sh
+- node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --reporter mocha-lcov-reporter
+- node script/lcov-transform.js coverage/lcov.info `pwd`/ bin lib | node_modules/.bin/coveralls
 node_js:
-  - "0.10"
-  - "0.11"
-  - "0.12"
-  - "iojs"
+- '0.10'
+- '0.11'
+- '0.12'
+- iojs
+notifications:
+  slack:
+    secure: VhzlTmseCfRLDN0RqOFI2BrGHKCkYv1s08IGhT7V6ZgTZgIPLexNjx4eflaeUBvJVfF6rPwTwwjpoJE8wPT1U5akSPRmmx0RBpzzgQIE727zMvPb643/uC8oZnRfNlj3ApqbBJch/no4Y8Z7o2pb6Wu/4tG36xJakO2o3LPc4vIhuORFmYTm7AfDrDpxhN9nIl/Ggr71/HY+daEMQmHGC0QrW2uF+YkIKwRcMy+Cbj9LiVCRtvwq8m8L0rDFFxghSIHgDg7A+01nsAeNjUDCFCzUCQlX+BMypZDXjbwJv3/HSNnz3KDLi9o3Q54uINPT6YNGc7UnuIXerbY4uvBXCB8vBA2VywRgGO0s0lO5l+llWU1KykRJ4YFWUMs9c+nDAcvAGVr3iu/vaQzK3TWS3mP+W7aLkhtSPLqOZc1V6IMwNEUHt0vESwcWqHd8p1a6exV/5MvUq0Ec/uubdZCAWDR0DdAkiiPjWKNzsKNmMHIbtG8tRDLLNbDaLWr/nnr3AxsGh+KVJoRB6YXzT62yj/AD5P8dq8lCh7Vl10jQlD5W+dmDltdvR0O9MniXUYHmlugcl+fAEQS4RL08rH1XMgAKNmz5yZUIIxR8GjDVhH6df3dRfjUBaxjyKnU3Gx+VluSz0JDw3Si/g5uV+7tfUybzU15QbiHW+1z/BoqHqog=
