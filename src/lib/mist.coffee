@@ -11,16 +11,17 @@
 fs = require 'fs'
 readFd = require 'read-fd'
 findHigherFile = require 'find-higher-file'
+parseMist = require './parser/mist-parser'
 
 class Mist
-  constructor: (source, filename, opts = {})->
+  constructor: (@source, @filename, @opts = {})->
+    @tree = null
+
     if arguments.length <= 2
       if arguments.length < 1
         throw 'you must specify a filename'
-      filename = source
-      source = fs.readFileSync(filename).toString()
-
-    console.log(source, filename, opts)
+      @filename = @source
+      @source = fs.readFileSync(@filename).toString()
 
   run: (backend, cb)->
     try
@@ -33,6 +34,16 @@ class Mist
       back.run @, cb
 
   process: (cb)->
+    if @tree then return cb null, @tree
+
+    # run through the parser
+    structure = null
+    try
+      structure = parseMist @source
+    catch e
+      cb e
+
+    console.log require('util').inspect structure, colors:on,depth:null
 
 Mist.find = (from = process.cwd(), opts, cb)->
   if arguments.length is 2
